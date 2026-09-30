@@ -640,7 +640,14 @@ def fallback_and_log_node(state: AgentState) -> Dict[str, Any]:
 
     generation = get_executive_fallback(state)
 
-    log_result = record_unanswered_query(raw_query=question)
+    agent_name = state.get("agent_name") or "General Agent"
+    agent_id = state.get("agent_id") or state.get("tenant_id")
+
+    log_result = record_unanswered_query(
+        raw_query=question,
+        agent_name=agent_name,
+        agent_id=agent_id,
+    )
     freq = log_result.get("frequency_count", 1)
     admin_alert_needed = bool(
         log_result.get("admin_alert_needed", False)

@@ -322,6 +322,87 @@ export async function fetchAdminAlerts(
 }
 
 /**
+ * Permanently delete a specific unanswered query alert by ID.
+ */
+export async function deleteAdminAlert(
+  alertId: number
+): Promise<{ success: boolean; id: number; message: string }> {
+  const response = await fetch(`${BASE_URL}/api/v1/admin/alerts/${alertId}`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    const errorJson = await response.json().catch(() => ({}));
+    throw new Error(
+      errorJson.detail || `Failed to delete alert #${alertId} (status ${response.status})`
+    );
+  }
+
+  return response.json();
+}
+
+/**
+ * Mark a specific unanswered query alert as resolved.
+ */
+export async function resolveAdminAlert(
+  alertId: number
+): Promise<{ success: boolean; id: number; status: string; message: string }> {
+  const response = await fetch(`${BASE_URL}/api/v1/admin/alerts/${alertId}/resolve`, {
+    method: "PATCH",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    const errorJson = await response.json().catch(() => ({}));
+    throw new Error(
+      errorJson.detail || `Failed to resolve alert #${alertId} (status ${response.status})`
+    );
+  }
+
+  return response.json();
+}
+
+/**
+ * Bulk clear or resolve unanswered query alerts.
+ */
+export async function clearAllAdminAlerts(
+  statusFilter: string = "pending",
+  action: "delete" | "resolve" = "delete"
+): Promise<{ success: boolean; action: string; affected_count: number; message: string }> {
+  const params = new URLSearchParams();
+  if (statusFilter) {
+    params.set("status_filter", statusFilter);
+  }
+  if (action) {
+    params.set("action", action);
+  }
+
+  const response = await fetch(
+    `${BASE_URL}/api/v1/admin/alerts/clear-all?${params.toString()}`,
+    {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const errorJson = await response.json().catch(() => ({}));
+    throw new Error(
+      errorJson.detail || `Failed to clear alerts (status ${response.status})`
+    );
+  }
+
+  return response.json();
+}
+
+/**
  * Check backend operational health and vector collection metrics.
  */
 export async function checkSystemHealth(): Promise<SystemHealthResponse> {

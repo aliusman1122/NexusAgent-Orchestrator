@@ -40,6 +40,24 @@ def seed_database() -> None:
                     conn.execute(text("ALTER TABLE agents ADD COLUMN IF NOT EXISTS welcome_message TEXT"))
                     conn.commit()
                     logger.info("Migrated PostgreSQL schema: verified/added 'system_prompt' & 'welcome_message' columns to 'agents' table.")
+
+                # Check and add agent_name and agent_id columns to unanswered_logs table if missing
+                if engine.url.drivername.startswith("sqlite"):
+                    cursor = conn.execute(text("PRAGMA table_info(unanswered_logs)"))
+                    cols = [row[1] for row in cursor.fetchall()]
+                    if "agent_name" not in cols:
+                        conn.execute(text("ALTER TABLE unanswered_logs ADD COLUMN agent_name VARCHAR(128) DEFAULT 'General Agent'"))
+                        conn.commit()
+                        logger.info("Migrated SQLite schema: added 'agent_name' column to 'unanswered_logs' table.")
+                    if "agent_id" not in cols:
+                        conn.execute(text("ALTER TABLE unanswered_logs ADD COLUMN agent_id VARCHAR(64)"))
+                        conn.commit()
+                        logger.info("Migrated SQLite schema: added 'agent_id' column to 'unanswered_logs' table.")
+                else:
+                    conn.execute(text("ALTER TABLE unanswered_logs ADD COLUMN IF NOT EXISTS agent_name VARCHAR(128) DEFAULT 'General Agent'"))
+                    conn.execute(text("ALTER TABLE unanswered_logs ADD COLUMN IF NOT EXISTS agent_id VARCHAR(64)"))
+                    conn.commit()
+                    logger.info("Migrated PostgreSQL schema: verified/added 'agent_name' & 'agent_id' columns to 'unanswered_logs' table.")
             except Exception as e:
                 logger.debug("Column migration notice: %s", e)
 

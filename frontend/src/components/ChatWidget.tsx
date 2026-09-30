@@ -203,7 +203,7 @@ function ChatWidgetContent() {
       const errorMessage: ChatMessage = {
         id: "err-" + Date.now(),
         role: "assistant",
-        content: `⚠️ **Connection Notice:** Unable to communicate with the ${activeAgent?.name || "A7 Logics"} service. Please ensure the backend server is active.`,
+        content: `⚠️ **Connection Notice:** Unable to communicate with the ${activeAgent?.name || "NexusAgent"} service. Please ensure the backend server is active.`,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -222,12 +222,13 @@ function ChatWidgetContent() {
 
   // Header Title and Subtitle
   const cleanAgentName = getCleanAgentName(activeAgent?.name);
-  const widgetTitle = activeAgent ? cleanAgentName : "A7 Logics Assistant";
+  const widgetTitle = activeAgent ? cleanAgentName : "NexusAgent Assistant";
   const widgetSubtitle =
     !activeAgent ||
       activeAgent.slug === "a7_logics" ||
       activeAgent.id === "a7_logics" ||
-      activeAgent.name.toLowerCase().includes("a7 logics")
+      activeAgent.name.toLowerCase().includes("a7 logics") ||
+      activeAgent.name.toLowerCase().includes("nexusagent")
       ? "Executive Client Representative"
       : (typeof activeAgent.persona === "string" && activeAgent.persona.trim() && activeAgent.persona !== "Executive"
         ? activeAgent.persona
@@ -247,7 +248,7 @@ function ChatWidgetContent() {
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="relative shrink-0">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF6A00] to-[#E55F00] flex items-center justify-center font-black text-white text-xs shadow-md shadow-[#FF6A00]/20">
-                  {activeAgent?.name ? activeAgent.name.charAt(0) : "A7"}
+                  {activeAgent?.name ? activeAgent.name.charAt(0) : "NX"}
                 </div>
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-[#161B22]" />
               </div>
@@ -421,7 +422,7 @@ function ChatWidgetContent() {
 
         {!isOpen && (
           <span className="absolute right-16 px-3 py-1.5 rounded-lg bg-[#161B22] border border-[#30363D] text-xs font-medium text-white shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-            {activeAgent ? `Chat with ${activeAgent.name}` : "Chat with A7 Logics AI"}
+            {activeAgent ? `Chat with ${activeAgent.name}` : "Chat with NexusAgent AI"}
           </span>
         )}
       </button>

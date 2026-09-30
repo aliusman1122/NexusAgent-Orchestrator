@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "A7 Logics | Enterprise AI Agent & Software Engineering",
+  title: "NexusAgent Orchestrator | Enterprise Multi-Agent Governance & RAG Platform",
   description:
-    "A7 Logics Enterprise AI Assistant powered by LangGraph, ChromaDB, and FastAPI with an embeddable Next.js client widget.",
+    "Enterprise Multi-Agent Orchestrator and Knowledge Governance Platform powered by stateful LangGraph workflows, ChromaDB vector retrieval, and automated admin escalations.",
 };
 
 export default function RootLayout({

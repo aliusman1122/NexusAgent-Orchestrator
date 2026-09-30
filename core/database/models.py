@@ -41,6 +41,8 @@ class UnansweredLog(Base):
         default="pending",
         nullable=False,
     )  # 'pending', 'resolved', 'ignored'
+    agent_name = Column(String(128), default="General Agent", nullable=True)
+    agent_id = Column(String(64), nullable=True)
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert model instance to serializable dictionary."""
@@ -57,6 +59,8 @@ class UnansweredLog(Base):
             ),
             "alert_triggered": self.alert_triggered,
             "status": self.status,
+            "agent_name": self.agent_name or "General Agent",
+            "agent_id": self.agent_id,
         }
 
     def __repr__(self) -> str:

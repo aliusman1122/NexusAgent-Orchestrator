@@ -97,13 +97,18 @@ def normalize_query(query: str) -> str:
 
 
 def record_unanswered_query(
-    raw_query: str, session: Optional[Session] = None
+    raw_query: str,
+    session: Optional[Session] = None,
+    agent_name: Optional[str] = None,
+    agent_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Record an unanswered query, increment frequency, and check alert threshold.
 
     Args:
         raw_query: Verbatim user query string.
         session: Optional SQLAlchemy session (defaults to context-managed session).
+        agent_name: Optional agent name attribution.
+        agent_id: Optional agent ID.
 
     Returns:
         Dict[str, Any]: Tracking record summary including:
@@ -114,6 +119,8 @@ def record_unanswered_query(
             - alert_triggered: Current alert state
             - admin_alert_needed: True if this specific query reached threshold and triggered a new alert
             - status: Record status ('pending', 'resolved', 'ignored')
+            - agent_name: Name of agent interacted with
+            - agent_id: Agent ID
     """
     cleaned_query = (raw_query or "").strip()
     normalized = normalize_query(cleaned_query)
@@ -128,6 +135,8 @@ def record_unanswered_query(
             "alert_triggered": False,
             "admin_alert_needed": False,
             "status": "ignored",
+            "agent_name": agent_name or "General Agent",
+            "agent_id": agent_id,
         }
 
     # Internal worker logic
@@ -150,6 +159,10 @@ def record_unanswered_query(
             log_entry.last_asked_at = now_utc
             # Update verbatim query to most recent phrasing if preferred
             log_entry.user_query = cleaned_query
+            if agent_name:
+                log_entry.agent_name = agent_name
+            if agent_id:
+                log_entry.agent_id = agent_id
 
             # Check threshold trigger: frequency >= 3 and alert not yet triggered
             if log_entry.frequency_count >= threshold and not log_entry.alert_triggered:
@@ -176,9 +189,11 @@ def record_unanswered_query(
                 last_asked_at=now_utc,
                 alert_triggered=False,
                 status="pending",
+                agent_name=agent_name or "General Agent",
+                agent_id=agent_id,
             )
             s.add(log_entry)
-            logger.info("Recorded new unanswered query: '%s'", normalized)
+            logger.info("Recorded new unanswered query: '%s' for agent: '%s'", normalized, log_entry.agent_name)
 
         s.flush()
 
@@ -190,6 +205,8 @@ def record_unanswered_query(
             "alert_triggered": log_entry.alert_triggered,
             "admin_alert_needed": admin_alert_needed,
             "status": log_entry.status,
+            "agent_name": log_entry.agent_name or "General Agent",
+            "agent_id": log_entry.agent_id,
             "first_asked_at": (
                 log_entry.first_asked_at.isoformat()
                 if log_entry.first_asked_at

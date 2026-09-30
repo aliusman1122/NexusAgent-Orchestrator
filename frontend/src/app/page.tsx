@@ -1,19 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Code2,
-  Smartphone,
-  Cpu,
-  ShieldCheck,
-  ArrowRight,
-  Sparkles,
-  Server,
-  Layers,
-  Database,
-  BellRing,
-  ExternalLink,
-} from "lucide-react";
+import Link from "next/link";
+import { Layers, ArrowRight, Bot } from "lucide-react";
+import { PortalHeader } from "@/components/portal/PortalHeader";
+import { HeroSection } from "@/components/portal/HeroSection";
+import { AgentPlayground } from "@/components/portal/AgentPlayground";
+import { FeaturePillars } from "@/components/portal/FeaturePillars";
 import { ChatWidget } from "@/components/ChatWidget";
 import { AdminAlertsModal } from "@/components/AdminAlertsModal";
 import { checkSystemHealth } from "@/services/api";
@@ -25,207 +18,135 @@ export default function Home() {
   const [isBackendOnline, setIsBackendOnline] = useState<boolean | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     const checkHealth = async () => {
       try {
         const data = await checkSystemHealth();
-        setHealth(data);
-        setIsBackendOnline(true);
+        if (isMounted) {
+          setHealth(data);
+          setIsBackendOnline(true);
+        }
       } catch {
-        setIsBackendOnline(false);
+        if (isMounted) {
+          setIsBackendOnline(false);
+        }
       }
     };
 
     checkHealth();
     const interval = setInterval(checkHealth, 15000);
-    return () => clearInterval(interval);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#0E1117] text-[#E6EDF3] relative overflow-hidden selection:bg-[#FF6A00] selection:text-white">
-      {/* Background Accent Gradients */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-gradient-to-b from-[#FF6A00]/10 via-[#FF6A00]/5 to-transparent blur-3xl pointer-events-none" />
+    <main className="min-h-screen bg-[#0E1117] text-[#E6EDF3] relative overflow-hidden selection:bg-[#FF6A00] selection:text-white flex flex-col">
+      {/* Background Accent Gradients & Grid Pattern */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[500px] bg-gradient-to-b from-[#FF6A00]/10 via-[#FF6A00]/4 to-transparent blur-3xl pointer-events-none -z-10" />
+      <div className="fixed inset-0 bg-[radial-gradient(#1f242c_1px,transparent_1px)] [background-size:32px_32px] pointer-events-none opacity-40 -z-10" />
 
-      {/* Navigation Header */}
-      <header className="border-b border-[#30363D] bg-[#0E1117]/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      {/* Global Glassmorphic Header */}
+      <PortalHeader
+        isBackendOnline={isBackendOnline}
+        onOpenAlerts={() => setIsAdminOpen(true)}
+        activeModel={health?.llm_model}
+      />
+
+      {/* Main SaaS Portal Content */}
+      <div className="flex-1 flex flex-col">
+        {/* Hero Section with Live Telemetry */}
+        <HeroSection health={health} isBackendOnline={isBackendOnline} />
+
+        {/* Agnostic Agent Playground / Interactive Sandbox */}
+        <AgentPlayground />
+
+        {/* Core Product Pillars Showcase */}
+        <FeaturePillars />
+
+        {/* Call-to-Action Enterprise Banner */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+          <div className="max-w-5xl mx-auto rounded-3xl bg-gradient-to-r from-[#161B22] via-[#1A212C] to-[#161B22] border border-[#FF6A00]/30 p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
+            <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#FF6A00]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <span className="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-[#FF6A00]/20 text-[#FF6A00] border border-[#FF6A00]/40">
+                READY FOR PRODUCTION
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-4 tracking-tight">
+                Scale Multi-Agent Intelligence With Confidence
+              </h2>
+              <p className="mt-3 text-sm sm:text-base text-[#94A3B8] leading-relaxed">
+                Connect your enterprise knowledge base, configure tone and guardrails, and 
+                deploy self-governing agents in minutes.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#E55F00] hover:from-[#FF7D20] hover:to-[#FF6A00] text-white font-bold text-sm shadow-xl shadow-[#FF6A00]/30 hover:shadow-[#FF6A00]/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 border border-white/20"
+                >
+                  <Bot className="w-4 h-4" />
+                  <span>Open Admin Console</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  href="/admin/agents"
+                  className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-[#161B22] hover:bg-[#1F242C] text-[#CBD5E1] hover:text-white font-semibold text-sm border border-[#30363D] hover:border-[#FF6A00]/40 transition-all"
+                >
+                  <span>Explore Agent Studio</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* Enterprise Global Portal Footer */}
+      <footer className="border-t border-[#30363D] bg-[#0A0D12] text-[#94A3B8] py-12 px-4 sm:px-6 lg:px-8 mt-12">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#FF6A00] to-[#E55F00] flex items-center justify-center font-black text-white text-sm shadow-lg shadow-[#FF6A00]/25">
-              A7
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#FF6A00] to-[#E55F00] flex items-center justify-center text-white font-bold shadow-md shadow-[#FF6A00]/20">
+              <Layers className="w-4 h-4" />
             </div>
             <div>
-              <span className="font-bold text-lg text-white tracking-tight">A7 LOGICS</span>
-              <span className="ml-2 text-xs text-[#94A3B8] font-mono hidden sm:inline">
-                ENTERPRISE AI SUITE
+              <span className="font-bold text-white tracking-tight">NexusAgent Orchestrator</span>
+              <span className="text-xs text-[#64748B] block font-mono">
+                Enterprise Multi-Agent Governance & Stateful RAG
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Backend Connectivity Status Badge */}
-            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[#161B22] border border-[#30363D] text-xs font-medium">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  isBackendOnline === true
-                    ? "bg-emerald-400 shadow-sm shadow-emerald-400 animate-pulse"
-                    : isBackendOnline === false
-                    ? "bg-red-400"
-                    : "bg-amber-400"
-                }`}
-              />
-              <span className="text-[#94A3B8]">
-                FastAPI Backend:{" "}
-                <strong className={isBackendOnline ? "text-emerald-400" : "text-amber-400"}>
-                  {isBackendOnline === true ? "Online (8000)" : isBackendOnline === false ? "Offline" : "Checking..."}
-                </strong>
-              </span>
-            </div>
+          {/* Quick Jump Links */}
+          <div className="flex flex-wrap items-center gap-6 text-xs font-medium">
+            <a href="#playground" className="hover:text-white transition-colors">
+              Playground
+            </a>
+            <a href="#pillars" className="hover:text-white transition-colors">
+              Pillars
+            </a>
+            <a href="#telemetry" className="hover:text-white transition-colors">
+              Telemetry
+            </a>
+            <Link href="/admin/agents" className="hover:text-[#FF6A00] transition-colors">
+              Agent Studio
+            </Link>
+            <Link href="/admin/settings" className="hover:text-[#FF6A00] transition-colors">
+              Settings & Quota
+            </Link>
+          </div>
 
-            {/* Admin Alerts Button */}
-            <button
-              onClick={() => setIsAdminOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161B22] hover:bg-[#1F242C] text-xs text-[#CBD5E1] hover:text-[#FF6A00] border border-[#30363D] hover:border-[#FF6A00]/40 transition-colors"
-            >
-              <BellRing className="w-3.5 h-3.5 text-[#FF6A00]" />
-              <span>Admin Alerts</span>
-            </button>
+          {/* Copyright & Engine Tag */}
+          <div className="text-xs text-[#64748B] text-center md:text-right font-mono">
+            <span>FastAPI • LangGraph • ChromaDB • PostgreSQL</span>
           </div>
         </div>
-      </header>
+      </footer>
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-6 pt-16 pb-12 text-center relative z-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161B22] border border-[#FF6A00]/30 text-xs text-[#FF6A00] font-medium mb-6 shadow-sm">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Production-Grade LangGraph RAG + Next.js Client Widget</span>
-        </div>
-
-        <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight max-w-4xl mx-auto">
-          Intelligent Client Interactions Grounded in{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6A00] via-[#FF8C38] to-[#FFA96B]">
-            Enterprise Knowledge
-          </span>
-        </h1>
-
-        <p className="mt-6 text-base sm:text-lg text-[#94A3B8] max-w-2xl mx-auto leading-relaxed">
-          Welcome to the migrated A7 Logics AI Assistant. Powered by a headless FastAPI LangGraph pipeline
-          and an embeddable Next.js floating chat bubble with strict factual grounding and automated admin escalations.
-        </p>
-
-        {/* Live System Specs Cards */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-          <div className="p-4 rounded-xl bg-[#161B22] border border-[#30363D] text-left">
-            <div className="flex items-center justify-between text-[#94A3B8] text-xs">
-              <span>Vector Chunks</span>
-              <Database className="w-4 h-4 text-[#FF6A00]" />
-            </div>
-            <div className="text-2xl font-bold text-white mt-1">
-              {health?.indexed_chunks ?? 21}
-            </div>
-            <p className="text-[11px] text-[#64748B] mt-1">ChromaDB Collection</p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-[#161B22] border border-[#30363D] text-left">
-            <div className="flex items-center justify-between text-[#94A3B8] text-xs">
-              <span>Grounding LLM</span>
-              <Cpu className="w-4 h-4 text-[#38BDF8]" />
-            </div>
-            <div className="text-sm font-bold text-white mt-2 truncate" title={health?.llm_model}>
-              {health?.llm_model ? health.llm_model.replace("openai/", "") : "GPT-OSS-120B"}
-            </div>
-            <p className="text-[11px] text-[#64748B] mt-1">Structured QA Evaluator</p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-[#161B22] border border-[#30363D] text-left">
-            <div className="flex items-center justify-between text-[#94A3B8] text-xs">
-              <span>Database Engine</span>
-              <Server className="w-4 h-4 text-[#10B981]" />
-            </div>
-            <div className="text-base font-bold text-white mt-1">
-              {health?.database ?? "SQLite Engine"}
-            </div>
-            <p className="text-[11px] text-[#64748B] mt-1">unanswered_logs Table</p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-[#161B22] border border-[#30363D] text-left">
-            <div className="flex items-center justify-between text-[#94A3B8] text-xs">
-              <span>Escalation Rule</span>
-              <ShieldCheck className="w-4 h-4 text-[#F59E0B]" />
-            </div>
-            <div className="text-2xl font-bold text-white mt-1">3 Strikes</div>
-            <p className="text-[11px] text-[#64748B] mt-1">Automated Admin Alert</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Grid Section */}
-      <section className="max-w-7xl mx-auto px-6 py-12">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl font-bold text-white tracking-tight">
-            A7 Logics Core Engineering Capabilities
-          </h2>
-          <p className="text-xs text-[#94A3B8] mt-1">
-            All services below are indexed in the knowledge base and retrievable via the chat widget.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {/* Card 1 */}
-          <div className="p-6 rounded-2xl bg-[#161B22] border border-[#30363D] hover:border-[#FF6A00]/50 transition-all group">
-            <div className="w-10 h-10 rounded-xl bg-[#FF6A00]/10 border border-[#FF6A00]/20 flex items-center justify-center text-[#FF6A00] mb-4">
-              <Code2 className="w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-bold text-white group-hover:text-[#FF6A00] transition-colors">
-              Full-Stack Web Engineering
-            </h3>
-            <p className="mt-2 text-xs text-[#94A3B8] leading-relaxed">
-              React, Next.js, Node.js, Python, TypeScript, and cloud-native backends engineered with enterprise security and microservices architecture.
-            </p>
-            <div className="mt-4 pt-4 border-t border-[#30363D]/60 flex items-center gap-2 text-xs text-[#FF6A00] font-medium">
-              <span>6-Step Agile Development</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </div>
-          </div>
-
-          {/* Card 2 */}
-          <div className="p-6 rounded-2xl bg-[#161B22] border border-[#30363D] hover:border-[#FF6A00]/50 transition-all group">
-            <div className="w-10 h-10 rounded-xl bg-[#FF6A00]/10 border border-[#FF6A00]/20 flex items-center justify-center text-[#FF6A00] mb-4">
-              <Smartphone className="w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-bold text-white group-hover:text-[#FF6A00] transition-colors">
-              Cross-Platform Mobile Apps
-            </h3>
-            <p className="mt-2 text-xs text-[#94A3B8] leading-relaxed">
-              Native and hybrid mobile applications built on Flutter and React Native with offline caching, push notifications, and App Store compliance.
-            </p>
-            <div className="mt-4 pt-4 border-t border-[#30363D]/60 flex items-center gap-2 text-xs text-[#FF6A00] font-medium">
-              <span>iOS & Android Optimization</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </div>
-          </div>
-
-          {/* Card 3 */}
-          <div className="p-6 rounded-2xl bg-[#161B22] border border-[#30363D] hover:border-[#FF6A00]/50 transition-all group">
-            <div className="w-10 h-10 rounded-xl bg-[#FF6A00]/10 border border-[#FF6A00]/20 flex items-center justify-center text-[#FF6A00] mb-4">
-              <Layers className="w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-bold text-white group-hover:text-[#FF6A00] transition-colors">
-              Enterprise AI & RAG Solutions
-            </h3>
-            <p className="mt-2 text-xs text-[#94A3B8] leading-relaxed">
-              LangGraph-compiled state workflows, vector retrieval deduplication, hallucination prevention, and automated administrative intelligence.
-            </p>
-            <div className="mt-4 pt-4 border-t border-[#30363D]/60 flex items-center gap-2 text-xs text-[#FF6A00] font-medium">
-              <span>Grounded QA Verification</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Floating Chat Widget Embed */}
+      {/* Ambient Floating Chat Widget Embed */}
       <ChatWidget />
 
-      {/* Admin Alerts Inspector Modal */}
+      {/* Unresolved Admin Alerts Inspector Modal */}
       <AdminAlertsModal isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
     </main>
   );

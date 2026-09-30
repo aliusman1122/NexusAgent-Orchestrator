@@ -90,6 +90,8 @@ class UnansweredLogItem(BaseModel):
     last_asked_at: Optional[str]
     alert_triggered: bool
     status: str
+    agent_name: Optional[str] = "General Agent"
+    agent_id: Optional[str] = None
 
 
 class AdminAlertsResponse(BaseModel):
@@ -151,6 +153,114 @@ def get_admin_alerts(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Database query error: {str(exc)}",
+        )
+
+
+@router.delete(
+    "/admin/alerts/clear-all",
+    summary="Clear or resolve all alerts",
+    description="Deletes or resolves all pending unanswered query alerts in bulk.",
+)
+def clear_all_admin_alerts(
+    status_filter: Optional[str] = Query(
+        default="pending",
+        description="Filter status of alerts to clear ('pending' or 'all').",
+    ),
+    action: Optional[str] = Query(
+        default="delete",
+        description="Action to perform: 'delete' (permanently remove) or 'resolve' (mark as resolved).",
+    ),
+) -> Dict[str, Any]:
+    """Bulk clear or resolve alerts."""
+    try:
+        with get_db_session() as session:
+            stmt = select(UnansweredLog)
+            if status_filter and status_filter.lower() != "all":
+                stmt = stmt.where(UnansweredLog.status == status_filter.lower())
+
+            records = session.execute(stmt).scalars().all()
+            count = len(records)
+
+            if action == "resolve":
+                for r in records:
+                    r.status = "resolved"
+            else:
+                for r in records:
+                    session.delete(r)
+
+            session.commit()
+            return {
+                "success": True,
+                "action": action,
+                "affected_count": count,
+                "message": f"Successfully {action}d {count} alerts.",
+            }
+    except Exception as exc:
+        logger.exception("Error clearing alerts: %s", exc)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database error clearing alerts: {str(exc)}",
+        )
+
+
+@router.delete(
+    "/admin/alerts/{alert_id}",
+    summary="Delete a specific unanswered query alert",
+    description="Permanently deletes an unanswered query log entry from the database.",
+)
+def delete_admin_alert(alert_id: int) -> Dict[str, Any]:
+    """Delete a specific alert by ID."""
+    try:
+        with get_db_session() as session:
+            record = session.query(UnansweredLog).filter(UnansweredLog.id == alert_id).first()
+            if not record:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Alert #{alert_id} not found.",
+                )
+            session.delete(record)
+            session.commit()
+            return {"success": True, "id": alert_id, "message": f"Alert #{alert_id} deleted."}
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Error deleting alert %s: %s", alert_id, exc)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database error deleting alert: {str(exc)}",
+        )
+
+
+@router.patch(
+    "/admin/alerts/{alert_id}/resolve",
+    summary="Mark an unanswered query alert as resolved",
+    description="Updates the status of an unanswered query alert from pending to resolved.",
+)
+def resolve_admin_alert(alert_id: int) -> Dict[str, Any]:
+    """Mark alert as resolved."""
+    try:
+        with get_db_session() as session:
+            record = session.query(UnansweredLog).filter(UnansweredLog.id == alert_id).first()
+            if not record:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Alert #{alert_id} not found.",
+                )
+            record.status = "resolved"
+            session.commit()
+            return {
+                "success": True,
+                "id": alert_id,
+                "status": "resolved",
+                "message": f"Alert #{alert_id} marked as resolved.",
+            }
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Error resolving alert %s: %s", alert_id, exc)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database error resolving alert: {str(exc)}",
         )
 
 

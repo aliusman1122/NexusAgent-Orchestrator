@@ -50,6 +50,8 @@ export interface UnansweredLogItem {
   last_asked_at: string | null;
   alert_triggered: boolean;
   status: string;
+  agent_name?: string;
+  agent_id?: string;
 }
 
 export interface AdminAlertsResponse {
