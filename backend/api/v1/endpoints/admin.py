@@ -11,9 +11,11 @@ from langchain_core.documents import Document
 from pydantic import AnyHttpUrl, BaseModel, Field
 from sqlalchemy import desc, func, select
 
+import hashlib
 from config.settings import settings
 from core.database.connection import get_db_session
 from core.database.models import (
+    AdminUserModel,
     AgentModel,
     AppSettingModel,
     KnowledgeSourceModel,
@@ -77,6 +79,74 @@ class CollectionsStatusResponse(BaseModel):
 
     count: int
     collections: List[CollectionItem]
+
+
+class LoginRequest(BaseModel):
+    """Admin credentials login request."""
+    email: str
+    password: str
+
+
+class LoginResponse(BaseModel):
+    """Admin login response payload."""
+    success: bool
+    token: str
+    user: Dict[str, Any]
+    message: str
+
+
+@router.post(
+    "/auth/login",
+    response_model=LoginResponse,
+    summary="Super Admin Authentication",
+    description="Validates super admin credentials against database and issues session token.",
+)
+def admin_login(payload: LoginRequest) -> LoginResponse:
+    """Validate super admin credentials and return session token."""
+    clean_email = payload.email.strip().lower()
+    clean_pass = payload.password.strip()
+
+    # Master fallback credentials support: admin@nexusagent.com / adminnexusagent123
+    MASTER_EMAIL = "admin@nexusagent.com"
+    MASTER_PASS = "adminnexusagent123"
+
+    with get_db_session() as session:
+        user = session.query(AdminUserModel).filter(AdminUserModel.email == clean_email).first()
+        computed_hash = hashlib.sha256(clean_pass.encode("utf-8")).hexdigest()
+
+        if user and user.password_hash == computed_hash:
+            if not user.is_active:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin account is disabled.")
+            user.last_login_at = datetime.now(timezone.utc)
+            session.commit()
+            token = f"nexus_sess_{uuid.uuid4().hex}"
+            return LoginResponse(
+                success=True,
+                token=token,
+                user=user.to_dict(),
+                message="Successfully authenticated as Super Admin",
+            )
+
+        # Fallback check for master email/pass
+        if clean_email == MASTER_EMAIL and clean_pass == MASTER_PASS:
+            token = f"nexus_sess_{uuid.uuid4().hex}"
+            return LoginResponse(
+                success=True,
+                token=token,
+                user={
+                    "id": "admin_master",
+                    "email": MASTER_EMAIL,
+                    "name": "NexusAgent Super Admin",
+                    "role": "superadmin",
+                    "is_active": True,
+                },
+                message="Successfully authenticated as Super Admin",
+            )
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid admin email address or password.",
+    )
 
 
 class UnansweredLogItem(BaseModel):
@@ -353,6 +423,10 @@ class UpdateAgentRequest(BaseModel):
     welcome_message: Optional[str] = Field(None, description="Custom welcome message / initial greeting")
     welcomeMessage: Optional[str] = Field(None, description="Welcome message alias")
     status: Optional[str] = Field(None, description="Agent operational status (Draft, Indexing, Ready)")
+    custom_llm_enabled: Optional[bool] = Field(None, description="Enable dedicated custom LLM provider override")
+    custom_llm_provider: Optional[str] = Field(None, description="Custom LLM provider (gemini, groq, openrouter)")
+    custom_llm_model: Optional[str] = Field(None, description="Custom LLM model ID")
+    custom_llm_api_key: Optional[str] = Field(None, description="Custom LLM API key for client BYOK")
 
 
 @router.get(
@@ -498,6 +572,15 @@ def update_agent(slug: str, payload: UpdateAgentRequest) -> Dict[str, Any]:
 
         if payload.status is not None and payload.status.strip():
             agent.status = payload.status.strip()
+
+        if payload.custom_llm_enabled is not None:
+            agent.custom_llm_enabled = payload.custom_llm_enabled
+        if payload.custom_llm_provider is not None:
+            agent.custom_llm_provider = payload.custom_llm_provider.strip()
+        if payload.custom_llm_model is not None:
+            agent.custom_llm_model = payload.custom_llm_model.strip()
+        if payload.custom_llm_api_key is not None:
+            agent.custom_llm_api_key = payload.custom_llm_api_key.strip()
 
         session.commit()
         session.refresh(agent)
@@ -1459,6 +1542,33 @@ GROQ_MODELS: List[Dict[str, Any]] = [
     },
 ]
 
+GEMINI_MODELS: List[Dict[str, Any]] = [
+    {
+        "id": "gemini/gemini-2.0-flash",
+        "name": "gemini-2.0-flash",
+        "label": "Google Gemini (Gemini 2.0 Flash)",
+        "provider": "gemini",
+        "description": "Next-gen ultra fast multimodal model with real-time reasoning.",
+        "context_length": 1048576,
+    },
+    {
+        "id": "gemini/gemini-1.5-flash",
+        "name": "gemini-1.5-flash",
+        "label": "Google Gemini Flash (Gemini 1.5 Flash)",
+        "provider": "gemini",
+        "description": "High-speed, high-throughput, cost-effective multimodal inference.",
+        "context_length": 1048576,
+    },
+    {
+        "id": "gemini/gemini-1.5-pro",
+        "name": "gemini-1.5-pro",
+        "label": "Google Gemini Pro (Gemini 1.5 Pro)",
+        "provider": "gemini",
+        "description": "Mid-tier multimodal model with massive 2M context window.",
+        "context_length": 2097152,
+    },
+]
+
 STATIC_OPENROUTER_FALLBACK: List[Dict[str, Any]] = [
     {
         "id": "openai/gpt-4o",
@@ -1605,10 +1715,11 @@ def get_openrouter_live_models(force_refresh: bool = False) -> List[Dict[str, An
 class AppSettingsUpdatePayload(BaseModel):
     """Payload schema for updating global settings."""
 
-    active_provider: Optional[str] = Field(None, description="Active provider: groq, openrouter")
+    active_provider: Optional[str] = Field(None, description="Active provider: groq, gemini, openrouter")
     active_model: Optional[str] = Field(None, description="Active LLM model name")
     token_monthly_quota: Optional[str] = Field(None, description="Monthly token consumption budget")
     groq_api_key: Optional[str] = Field(None, description="Groq API key")
+    gemini_api_key: Optional[str] = Field(None, description="Google Gemini API key")
     openrouter_api_key: Optional[str] = Field(None, description="OpenRouter API key")
     openai_api_key: Optional[str] = Field(None, description="Legacy OpenAI API key (deprecated)")
 
@@ -1665,6 +1776,7 @@ def get_admin_settings() -> Dict[str, Any]:
             "active_model": settings_map.get("active_model") or settings.LLM_MODEL or "llama-3.3-70b-versatile",
             "token_monthly_quota": settings_map.get("token_monthly_quota") or "1000000",
             "groq_api_key": settings_map.get("groq_api_key") or settings.GROQ_API_KEY or "",
+            "gemini_api_key": settings_map.get("gemini_api_key") or settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "") or "",
             "openrouter_api_key": settings_map.get("openrouter_api_key") or os.getenv("OPENROUTER_API_KEY", "") or "",
         }
     except Exception as exc:
@@ -1719,9 +1831,9 @@ def update_admin_settings(payload: AppSettingsUpdatePayload) -> Dict[str, Any]:
     summary="List available LLM models",
 )
 def get_available_models(refresh: bool = False) -> List[Dict[str, Any]]:
-    """Return Groq models combined with live OpenRouter models."""
+    """Return Groq models combined with Gemini and live OpenRouter models."""
     or_models = get_openrouter_live_models(force_refresh=refresh)
-    return GROQ_MODELS + or_models
+    return GROQ_MODELS + GEMINI_MODELS + or_models
 
 
 @router.get(
@@ -1804,12 +1916,14 @@ def get_token_analytics() -> TokenAnalyticsResponse:
             )
 
             by_model: List[ModelTokenItem] = []
-            by_provider: Dict[str, int] = {"groq": 0, "openrouter": 0}
+            by_provider: Dict[str, int] = {"groq": 0, "gemini": 0, "openrouter": 0}
 
             def classify_provider(m_name: str) -> str:
                 m = m_name.lower().strip()
                 if m.startswith("groq/") or (("llama" in m or "gpt-oss" in m) and "/" not in m):
                     return "groq"
+                if m.startswith("gemini/") or (m.startswith("gemini") and "/" not in m):
+                    return "gemini"
                 return "openrouter"
 
             for m_row in model_rows:
@@ -1865,10 +1979,22 @@ class OpenRouterLimitData(BaseModel):
     message: Optional[str] = None
 
 
+class GeminiLimitData(BaseModel):
+    configured: bool = False
+    status: str = "not_configured"  # "active", "error", "not_configured"
+    status_code: Optional[int] = None
+    tier: Optional[str] = "Free Tier (Google AI Studio)"
+    rpm_limit: Optional[int] = 15
+    tpm_limit: Optional[int] = 1000000
+    rpd_limit: Optional[int] = 1500
+    message: Optional[str] = None
+
+
 class ProviderLimitsResponse(BaseModel):
     status: str = "success"
     timestamp: str
     groq: GroqLimitData
+    gemini: Optional[GeminiLimitData] = None
     openrouter: OpenRouterLimitData
 
 
@@ -1884,18 +2010,21 @@ class ProviderLimitsResponse(BaseModel):
     include_in_schema=False,
 )
 async def get_provider_limits() -> ProviderLimitsResponse:
-    """Fetch live rate limits and credit balances from Groq and OpenRouter APIs."""
+    """Fetch live rate limits and credit balances from Groq, Gemini, and OpenRouter APIs."""
     groq_key = ""
+    gemini_key = ""
     openrouter_key = ""
 
     try:
         with get_db_session() as session:
             rows = session.query(AppSettingModel).filter(
-                AppSettingModel.key.in_(["groq_api_key", "openrouter_api_key"])
+                AppSettingModel.key.in_(["groq_api_key", "gemini_api_key", "openrouter_api_key"])
             ).all()
             for r in rows:
                 if r.key == "groq_api_key" and r.value:
                     groq_key = r.value.strip()
+                elif r.key == "gemini_api_key" and r.value:
+                    gemini_key = r.value.strip()
                 elif r.key == "openrouter_api_key" and r.value:
                     openrouter_key = r.value.strip()
     except Exception as exc:
@@ -1903,6 +2032,8 @@ async def get_provider_limits() -> ProviderLimitsResponse:
 
     if not groq_key:
         groq_key = getattr(settings, "GROQ_API_KEY", "") or ""
+    if not gemini_key:
+        gemini_key = getattr(settings, "GEMINI_API_KEY", "") or os.getenv("GEMINI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "") or ""
     if not openrouter_key:
         openrouter_key = os.getenv("OPENROUTER_API_KEY", "") or ""
 
@@ -1951,6 +2082,44 @@ async def get_provider_limits() -> ProviderLimitsResponse:
                 configured=True,
                 status="error",
                 message=f"Failed to query Groq: {str(exc)}",
+            )
+
+    async def fetch_gemini_limits() -> GeminiLimitData:
+        if not gemini_key:
+            return GeminiLimitData(
+                configured=False,
+                status="not_configured",
+                message="No Google Gemini API key configured",
+            )
+        try:
+            async with httpx.AsyncClient(timeout=8.0) as client:
+                resp = await client.get(
+                    f"https://generativelanguage.googleapis.com/v1beta/models?key={gemini_key}"
+                )
+                if resp.status_code == 200:
+                    models = resp.json().get("models", [])
+                    return GeminiLimitData(
+                        configured=True,
+                        status="active",
+                        status_code=200,
+                        tier="Google AI Studio (Free Tier)",
+                        rpm_limit=15,
+                        tpm_limit=1000000,
+                        rpd_limit=1500,
+                        message=f"Active - Google Gemini connected ({len(models)} models available)",
+                    )
+                else:
+                    return GeminiLimitData(
+                        configured=True,
+                        status="error",
+                        status_code=resp.status_code,
+                        message=f"Gemini API returned HTTP {resp.status_code}",
+                    )
+        except Exception as exc:
+            return GeminiLimitData(
+                configured=True,
+                status="error",
+                message=f"Failed to query Gemini: {str(exc)}",
             )
 
     async def fetch_openrouter_limits() -> OpenRouterLimitData:
@@ -2002,14 +2171,15 @@ async def get_provider_limits() -> ProviderLimitsResponse:
                 message=f"Failed to query OpenRouter: {str(exc)}",
             )
 
-    groq_res, openrouter_res = await asyncio.gather(
-        fetch_groq_limits(), fetch_openrouter_limits()
+    groq_res, gemini_res, openrouter_res = await asyncio.gather(
+        fetch_groq_limits(), fetch_gemini_limits(), fetch_openrouter_limits()
     )
 
     return ProviderLimitsResponse(
         status="success",
         timestamp=datetime.now(timezone.utc).isoformat(),
         groq=groq_res,
+        gemini=gemini_res,
         openrouter=openrouter_res,
     )
 

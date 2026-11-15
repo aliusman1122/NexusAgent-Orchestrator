@@ -145,6 +145,10 @@ export interface UpdateAgentPayload {
   welcome_message?: string;
   welcomeMessage?: string;
   status?: string;
+  custom_llm_enabled?: boolean;
+  custom_llm_provider?: string;
+  custom_llm_model?: string;
+  custom_llm_api_key?: string;
 }
 
 export interface AppSettings {
@@ -152,6 +156,7 @@ export interface AppSettings {
   active_model: string;
   token_monthly_quota: string;
   groq_api_key?: string;
+  gemini_api_key?: string;
   openrouter_api_key?: string;
   openai_api_key?: string;
 }
@@ -163,7 +168,7 @@ export interface CuratedModel {
   provider: string;
   description?: string;
   context_length?: number;
-  pricing?: Record<string, any>;
+  pricing?: Record<string, unknown>;
 }
 
 export interface AgentTokenBreakdown {
@@ -219,9 +224,21 @@ export interface OpenRouterLimitData {
   message?: string | null;
 }
 
+export interface GeminiLimitData {
+  configured: boolean;
+  status: "active" | "error" | "not_configured" | string;
+  status_code?: number | null;
+  tier?: string | null;
+  rpm_limit?: number | null;
+  tpm_limit?: number | null;
+  rpd_limit?: number | null;
+  message?: string | null;
+}
+
 export interface ProviderLimitsResponse {
   status: string;
   timestamp: string;
   groq: GroqLimitData;
+  gemini?: GeminiLimitData;
   openrouter: OpenRouterLimitData;
 }

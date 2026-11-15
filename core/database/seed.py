@@ -4,12 +4,14 @@ import logging
 from config.settings import settings
 from core.database.connection import Base, engine, get_db_session
 from core.database.models import (
+    AdminUserModel,
     AgentModel,
     AppSettingModel,
     KnowledgeSourceModel,
     TokenUsageLogModel,
     UnansweredLog,
 )
+import hashlib
 
 logger = logging.getLogger(__name__)
 
@@ -131,7 +133,29 @@ def seed_database() -> None:
                 session.add(ecom)
                 logger.info("Seeded 'ecommerce_support' agent in database.")
 
-            # 4. Seed default global application settings
+            # 4. Seed default Super Admin User (NexusAgent Owner)
+            DEFAULT_ADMIN_EMAIL = "admin@nexusagent.com"
+            DEFAULT_ADMIN_PASS = "adminnexusagent123"
+            pass_hash = hashlib.sha256(DEFAULT_ADMIN_PASS.encode("utf-8")).hexdigest()
+
+            admin_user = session.query(AdminUserModel).filter(AdminUserModel.email == DEFAULT_ADMIN_EMAIL).first()
+            if not admin_user:
+                admin_user = AdminUserModel(
+                    id="admin_super",
+                    email=DEFAULT_ADMIN_EMAIL,
+                    password_hash=pass_hash,
+                    name="NexusAgent Super Admin",
+                    role="superadmin",
+                    is_active=True,
+                )
+                session.add(admin_user)
+                logger.info("Seeded default Super Admin (%s) in database.", DEFAULT_ADMIN_EMAIL)
+            else:
+                # Ensure password hash matches
+                admin_user.password_hash = pass_hash
+                admin_user.is_active = True
+
+            # 5. Seed default global application settings
             default_settings = {
                 "active_provider": "groq",
                 "active_model": "llama-3.3-70b-versatile",

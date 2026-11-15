@@ -140,29 +140,29 @@ export function CreateAgentModal({ isOpen, onClose, onAgentCreated }: CreateAgen
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="w-full max-w-lg bg-[#161B22] border border-[#30363D] rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+        className="w-full max-w-lg bg-white dark:bg-[#161B22] border border-slate-200 dark:border-[#30363D] rounded-2xl shadow-2xl overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#30363D] flex items-center justify-between bg-[#161B22]/90">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-[#30363D] flex items-center justify-between bg-white/90 dark:bg-[#161B22]/90">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#FF6A00]/15 border border-[#FF6A00]/30 flex items-center justify-center text-[#FF6A00]">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white tracking-tight">
+              <h2 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
                 Create New Enterprise Agent
               </h2>
-              <p className="text-xs text-[#8B949E]">
+              <p className="text-xs text-slate-500 dark:text-[#8B949E]">
                 Configure bot profile, tone, and identifier
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#8B949E] hover:text-white hover:bg-[#30363D]/50 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 dark:text-[#8B949E] hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#30363D]/50 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -171,7 +171,7 @@ export function CreateAgentModal({ isOpen, onClose, onAgentCreated }: CreateAgen
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
-            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400 flex items-center gap-2">
+            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-500 dark:text-red-400 flex items-center gap-2">
               <Info className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -179,7 +179,7 @@ export function CreateAgentModal({ isOpen, onClose, onAgentCreated }: CreateAgen
 
           {/* Bot Name */}
           <div>
-            <label className="block text-xs font-semibold text-[#E6EDF3] uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-[#E6EDF3] uppercase tracking-wider mb-1.5">
               Bot Name <span className="text-[#FF6A00]">*</span>
             </label>
             <input
@@ -188,22 +188,22 @@ export function CreateAgentModal({ isOpen, onClose, onAgentCreated }: CreateAgen
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Real Estate Advisor"
-              className="w-full px-3.5 py-2.5 bg-[#0E1117] border border-[#30363D] focus:border-[#FF6A00] focus:ring-1 focus:ring-[#FF6A00] rounded-xl text-sm text-white placeholder-[#484F58] outline-none transition-all"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#0E1117] border border-slate-300 dark:border-[#30363D] focus:border-[#FF6A00] focus:ring-1 focus:ring-[#FF6A00] rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-[#484F58] outline-none transition-all"
             />
           </div>
 
           {/* Bot Identifier / Slug */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-semibold text-[#E6EDF3] uppercase tracking-wider">
+              <label className="block text-xs font-semibold text-slate-700 dark:text-[#E6EDF3] uppercase tracking-wider">
                 Bot Identifier / Slug
               </label>
-              <span className="text-[11px] text-[#8B949E] font-mono">
+              <span className="text-[11px] text-slate-500 dark:text-[#8B949E] font-mono">
                 Auto-generated
               </span>
             </div>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8B949E] font-mono text-xs">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-[#8B949E] font-mono text-xs">
                 agent:
               </div>
               <input
@@ -214,17 +214,17 @@ export function CreateAgentModal({ isOpen, onClose, onAgentCreated }: CreateAgen
                   setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "_"));
                 }}
                 placeholder="real_estate_advisor"
-                className="w-full pl-16 pr-3.5 py-2.5 bg-[#0E1117] border border-[#30363D] focus:border-[#FF6A00] focus:ring-1 focus:ring-[#FF6A00] rounded-xl text-sm text-[#FF6A00] font-mono placeholder-[#484F58] outline-none transition-all"
+                className="w-full pl-16 pr-3.5 py-2.5 bg-slate-50 dark:bg-[#0E1117] border border-slate-300 dark:border-[#30363D] focus:border-[#FF6A00] focus:ring-1 focus:ring-[#FF6A00] rounded-xl text-sm text-[#FF6A00] font-mono placeholder-slate-400 dark:placeholder-[#484F58] outline-none transition-all"
               />
             </div>
-            <p className="mt-1 text-[11px] text-[#8B949E]">
+            <p className="mt-1 text-[11px] text-slate-500 dark:text-[#8B949E]">
               Unique machine identifier used for vector collection indexing.
             </p>
           </div>
 
           {/* Description / Purpose */}
           <div>
-            <label className="block text-xs font-semibold text-[#E6EDF3] uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-[#E6EDF3] uppercase tracking-wider mb-1.5">
               Description / Purpose
             </label>
             <textarea
@@ -232,13 +232,13 @@ export function CreateAgentModal({ isOpen, onClose, onAgentCreated }: CreateAgen
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe what this bot specializes in, key knowledge areas, or target users..."
-              className="w-full px-3.5 py-2.5 bg-[#0E1117] border border-[#30363D] focus:border-[#FF6A00] focus:ring-1 focus:ring-[#FF6A00] rounded-xl text-sm text-white placeholder-[#484F58] outline-none transition-all resize-none"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#0E1117] border border-slate-300 dark:border-[#30363D] focus:border-[#FF6A00] focus:ring-1 focus:ring-[#FF6A00] rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-[#484F58] outline-none transition-all resize-none"
             />
           </div>
 
           {/* Persona Tone */}
           <div>
-            <label className="block text-xs font-semibold text-[#E6EDF3] uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-[#E6EDF3] uppercase tracking-wider mb-1.5">
               Persona Tone
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -252,20 +252,20 @@ export function CreateAgentModal({ isOpen, onClose, onAgentCreated }: CreateAgen
                     className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
                       isSelected
                         ? "bg-[#FF6A00]/10 border-[#FF6A00] ring-1 ring-[#FF6A00]/50"
-                        : "bg-[#0E1117] border-[#30363D] hover:border-[#484F58] text-[#8B949E]"
+                        : "bg-slate-50 dark:bg-[#0E1117] border-slate-200 dark:border-[#30363D] hover:border-slate-300 dark:hover:border-[#484F58] text-slate-600 dark:text-[#8B949E]"
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
                       {t.icon}
                       <span
                         className={`text-xs font-semibold ${
-                          isSelected ? "text-white" : "text-[#E6EDF3]"
+                          isSelected ? "text-slate-900 dark:text-white" : "text-slate-700 dark:text-[#E6EDF3]"
                         }`}
                       >
                         {t.label}
                       </span>
                     </div>
-                    <span className="text-[10px] text-[#8B949E] leading-snug">
+                    <span className="text-[10px] text-slate-500 dark:text-[#8B949E] leading-snug">
                       {t.desc}
                     </span>
                   </button>
@@ -275,11 +275,11 @@ export function CreateAgentModal({ isOpen, onClose, onAgentCreated }: CreateAgen
           </div>
 
           {/* Modal Footer / Action */}
-          <div className="pt-4 border-t border-[#30363D] flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-slate-200 dark:border-[#30363D] flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-medium text-[#8B949E] hover:text-white rounded-xl hover:bg-[#30363D]/40 transition-colors"
+              className="px-4 py-2 text-xs font-medium text-slate-600 dark:text-[#8B949E] hover:text-slate-900 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-[#30363D]/40 transition-colors"
             >
               Cancel
             </button>

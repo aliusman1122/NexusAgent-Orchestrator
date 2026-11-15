@@ -239,37 +239,37 @@ function ChatWidgetContent() {
       {/* Chat Window Panel */}
       {isOpen && (
         <div
-          className="mb-4 w-[420px] max-w-[calc(100vw-2rem)] h-[620px] max-h-[calc(100vh-6rem)] flex flex-col bg-[#0E1117] border border-[#30363D] rounded-2xl shadow-2xl shadow-black/80 overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-5"
+          className="mb-4 w-[420px] max-w-[calc(100vw-2rem)] h-[620px] max-h-[calc(100vh-6rem)] flex flex-col bg-white dark:bg-[#0E1117] border border-slate-200 dark:border-[#30363D] rounded-2xl shadow-2xl shadow-slate-400/30 dark:shadow-black/80 overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-5"
           role="dialog"
           aria-label={widgetTitle}
         >
           {/* Header */}
-          <div className="px-4 py-3.5 bg-gradient-to-r from-[#161B22] to-[#1F242C] border-b border-[#30363D] flex items-center justify-between select-none">
+          <div className="px-4 py-3.5 bg-slate-50 dark:bg-gradient-to-r dark:from-[#161B22] dark:to-[#1F242C] border-b border-slate-200 dark:border-[#30363D] flex items-center justify-between select-none">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="relative shrink-0">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF6A00] to-[#E55F00] flex items-center justify-center font-black text-white text-xs shadow-md shadow-[#FF6A00]/20">
                   {activeAgent?.name ? activeAgent.name.charAt(0) : "NX"}
                 </div>
-                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-[#161B22]" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white dark:border-[#161B22]" />
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <h3 className="font-bold text-sm text-white tracking-tight truncate">
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white tracking-tight truncate">
                     {widgetTitle}
                   </h3>
                 </div>
-                <p className="text-[11px] text-[#94A3B8] leading-none mt-0.5 truncate">
+                <p className="text-[11px] text-slate-500 dark:text-[#94A3B8] leading-none mt-0.5 truncate">
                   {widgetSubtitle}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-1 text-[#94A3B8] shrink-0">
+            <div className="flex items-center gap-1 text-slate-500 dark:text-[#94A3B8] shrink-0">
               <button
                 type="button"
                 onClick={handleReset}
                 title="Clear conversation history"
-                className="p-1.5 hover:text-white hover:bg-[#21262D] rounded-lg transition-colors"
+                className="p-1.5 hover:text-slate-900 hover:bg-slate-200 dark:hover:text-white dark:hover:bg-[#21262D] rounded-lg transition-colors cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
@@ -277,7 +277,7 @@ function ChatWidgetContent() {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 title="Minimize chat"
-                className="p-1.5 hover:text-white hover:bg-[#21262D] rounded-lg transition-colors"
+                className="p-1.5 hover:text-slate-900 hover:bg-slate-200 dark:hover:text-white dark:hover:bg-[#21262D] rounded-lg transition-colors cursor-pointer"
               >
                 <ChevronDown className="w-4 h-4" />
               </button>
@@ -285,7 +285,7 @@ function ChatWidgetContent() {
           </div>
 
           {/* Messages Body */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0E1117]">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50 dark:bg-[#0E1117]">
             {messages.map((msg) => {
               const isUser = msg.role === "user";
 
@@ -297,7 +297,7 @@ function ChatWidgetContent() {
                   {/* Avatar */}
                   <div className="shrink-0 mt-0.5">
                     {isUser ? (
-                      <div className="w-7 h-7 rounded-full bg-[#1F242C] border border-[#30363D] flex items-center justify-center text-[#94A3B8]">
+                      <div className="w-7 h-7 rounded-full bg-slate-200 border border-slate-300 dark:bg-[#1F242C] dark:border-[#30363D] flex items-center justify-center text-slate-600 dark:text-[#94A3B8]">
                         <User className="w-3.5 h-3.5" />
                       </div>
                     ) : (
@@ -311,14 +311,14 @@ function ChatWidgetContent() {
                   <div
                     className={`max-w-[85%] rounded-2xl ${isUser
                         ? "px-4 py-2.5 bg-[#FF6A00] text-white rounded-tr-none font-medium shadow-sm"
-                        : "px-3.5 py-2.5 bg-[#161B22] text-[#E6EDF3] border border-[#30363D] rounded-tl-none"
+                        : "px-3.5 py-2.5 bg-white text-slate-800 border border-slate-200 dark:bg-[#161B22] dark:text-[#E6EDF3] dark:border-[#30363D] rounded-tl-none shadow-sm"
                       }`}
                   >
                     {/* Clean Markdown content */}
                     {isUser ? (
                       <p className="whitespace-pre-wrap leading-snug text-sm">{msg.content}</p>
                     ) : (
-                      <div className="text-sm text-[#E6EDF3] leading-relaxed space-y-2 [&>p]:leading-relaxed [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:my-2 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-1.5 [&>ol]:my-2 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-1.5 [&>li]:leading-relaxed [&>li]:text-[#E6EDF3] [&>strong]:text-white [&>strong]:font-semibold">
+                      <div className="text-sm text-slate-800 dark:text-[#E6EDF3] leading-relaxed space-y-2 [&>p]:leading-relaxed [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:my-2 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-1.5 [&>ol]:my-2 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-1.5 [&>li]:leading-relaxed [&>li]:text-slate-800 dark:[&>li]:text-[#E6EDF3] [&>strong]:text-slate-900 dark:[&>strong]:text-white [&>strong]:font-semibold">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {msg.content}
                         </ReactMarkdown>
@@ -327,7 +327,7 @@ function ChatWidgetContent() {
 
                     {/* Clean Timestamp */}
                     <div
-                      className={`mt-1 text-[10px] ${isUser ? "text-orange-100/70 text-right" : "text-[#6E7681] text-right"
+                      className={`mt-1 text-[10px] ${isUser ? "text-orange-100/80 text-right" : "text-slate-400 dark:text-[#6E7681] text-right"
                         }`}
                     >
                       {msg.timestamp}
@@ -343,7 +343,7 @@ function ChatWidgetContent() {
                 <div className="w-7 h-7 rounded-full bg-[#FF6A00]/20 border border-[#FF6A00]/40 flex items-center justify-center text-[#FF6A00] shrink-0 mt-0.5">
                   <Bot className="w-3.5 h-3.5 animate-pulse" />
                 </div>
-                <div className="bg-[#161B22] border border-[#30363D] rounded-2xl rounded-tl-none px-4 py-3 text-xs text-[#94A3B8] flex items-center gap-2">
+                <div className="bg-white border border-slate-200 dark:bg-[#161B22] dark:border-[#30363D] rounded-2xl rounded-tl-none px-4 py-3 text-xs text-slate-600 dark:text-[#94A3B8] flex items-center gap-2 shadow-sm">
                   <div className="flex gap-1 items-center">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A00] animate-bounce [animation-delay:-0.3s]" />
                     <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A00] animate-bounce [animation-delay:-0.15s]" />
@@ -359,7 +359,7 @@ function ChatWidgetContent() {
 
 
           {/* Chat Input Bar */}
-          <div className="p-3 bg-[#161B22] border-t border-[#30363D]">
+          <div className="p-3 bg-white dark:bg-[#161B22] border-t border-slate-200 dark:border-[#30363D]">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -367,7 +367,7 @@ function ChatWidgetContent() {
               }}
               className="flex items-end gap-2"
             >
-              <div className="flex-1 relative rounded-xl bg-[#0E1117] border border-[#30363D] focus-within:border-[#FF6A00] focus-within:ring-1 focus-within:ring-[#FF6A00] transition-all">
+              <div className="flex-1 relative rounded-xl bg-slate-50 dark:bg-[#0E1117] border border-slate-300 dark:border-[#30363D] focus-within:border-[#FF6A00] focus-within:ring-1 focus-within:ring-[#FF6A00] transition-all">
                 <textarea
                   ref={inputRef}
                   value={inputValue}
@@ -375,7 +375,7 @@ function ChatWidgetContent() {
                   onKeyDown={handleKeyDown}
                   rows={1}
                   placeholder={`Ask ${widgetTitle}...`}
-                  className="w-full bg-transparent px-3 py-2 text-xs text-[#E6EDF3] placeholder-[#64748B] focus:outline-none resize-none max-h-24"
+                  className="w-full bg-transparent px-3 py-2 text-xs text-slate-900 dark:text-[#E6EDF3] placeholder-slate-400 dark:placeholder-[#64748B] focus:outline-none resize-none max-h-24"
                   disabled={isLoading}
                 />
               </div>
@@ -383,14 +383,14 @@ function ChatWidgetContent() {
               <button
                 type="submit"
                 disabled={!inputValue.trim() || isLoading}
-                className="h-9 w-9 rounded-xl bg-[#FF6A00] hover:bg-[#E55F00] active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center text-white shadow-md shadow-[#FF6A00]/25 transition-all shrink-0"
+                className="h-9 w-9 rounded-xl bg-[#FF6A00] hover:bg-[#E55F00] active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center text-white shadow-md shadow-[#FF6A00]/25 transition-all shrink-0 cursor-pointer"
                 aria-label="Send message"
               >
                 <Send className="w-4 h-4" />
               </button>
             </form>
 
-            <div className="mt-1.5 flex items-center justify-between text-[10px] text-[#64748B] px-1">
+            <div className="mt-1.5 flex items-center justify-between text-[10px] text-slate-400 dark:text-[#64748B] px-1">
               <span>Official {cleanAgentName}</span>
               <span>Press Enter to send</span>
             </div>
@@ -404,7 +404,7 @@ function ChatWidgetContent() {
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-label={isOpen ? `Close ${widgetTitle}` : `Open ${widgetTitle}`}
-        className="relative group h-14 w-14 rounded-full bg-gradient-to-tr from-[#FF6A00] to-[#FF8C38] hover:from-[#E55F00] hover:to-[#FF6A00] text-white flex items-center justify-center shadow-xl shadow-[#FF6A00]/30 hover:scale-105 active:scale-95 transition-all duration-200 border-2 border-white/20"
+        className="relative group h-14 w-14 rounded-full bg-gradient-to-tr from-[#FF6A00] to-[#FF8C38] hover:from-[#E55F00] hover:to-[#FF6A00] text-white flex items-center justify-center shadow-xl shadow-[#FF6A00]/30 hover:scale-105 active:scale-95 transition-all duration-200 border-2 border-white/20 cursor-pointer"
       >
         {isOpen ? (
           <X className="w-6 h-6 transition-transform duration-200 group-hover:rotate-90" />
@@ -414,14 +414,14 @@ function ChatWidgetContent() {
             {hasUnread && (
               <span className="absolute -top-1 -right-1 flex h-4 w-4">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-[#0E1117]" />
+                <span className="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-white dark:border-[#0E1117]" />
               </span>
             )}
           </>
         )}
 
         {!isOpen && (
-          <span className="absolute right-16 px-3 py-1.5 rounded-lg bg-[#161B22] border border-[#30363D] text-xs font-medium text-white shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+          <span className="absolute right-16 px-3 py-1.5 rounded-lg bg-white dark:bg-[#161B22] border border-slate-200 dark:border-[#30363D] text-xs font-medium text-slate-800 dark:text-white shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
             {activeAgent ? `Chat with ${activeAgent.name}` : "Chat with NexusAgent AI"}
           </span>
         )}

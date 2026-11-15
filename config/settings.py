@@ -37,6 +37,7 @@ class Settings:
 
     # Groq API Configuration (Fast inference - Free tier)
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "").strip()
+    GEMINI_API_KEY: str = (os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "").strip()
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "").strip()
 
     # Embedding & LLM Models (Free Open Stack)
@@ -89,6 +90,22 @@ class Settings:
         if not is_valid and raise_error:
             raise ValueError(
                 "GROQ_API_KEY is not configured. Please set a valid key in your .env file."
+            )
+        return is_valid
+
+    def validate_gemini_key(self, raise_error: bool = False) -> bool:
+        """Validate if Google Gemini API Key is provided.
+
+        Args:
+            raise_error: Whether to raise ValueError if missing.
+
+        Returns:
+            bool: True if key is set and non-empty.
+        """
+        is_valid = bool(self.GEMINI_API_KEY and not self.GEMINI_API_KEY.startswith("your_"))
+        if not is_valid and raise_error:
+            raise ValueError(
+                "GEMINI_API_KEY is not configured. Please set a valid key in your .env file."
             )
         return is_valid
 

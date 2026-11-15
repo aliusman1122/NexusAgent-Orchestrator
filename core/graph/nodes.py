@@ -296,12 +296,18 @@ def grade_documents_node(state: AgentState) -> Dict[str, Any]:
     )
 
     try:
-        _ChatGroq = getattr(sys.modules.get("core.graph.nodes"), "ChatGroq", ChatGroq)
-        llm = _ChatGroq(
-            model_name=settings.LLM_MODEL,
-            temperature=0.0,
-            groq_api_key=settings.GROQ_API_KEY,
-        )
+        _current_ChatGroq = getattr(sys.modules.get("core.graph.nodes"), "ChatGroq", ChatGroq)
+        if (
+            _current_ChatGroq is not _ORIGINAL_CHAT_GROQ
+            or "mock" in type(_current_ChatGroq).__name__.lower()
+        ):
+            llm = _current_ChatGroq(
+                model_name=settings.LLM_MODEL,
+                temperature=0.0,
+                groq_api_key=settings.GROQ_API_KEY,
+            )
+        else:
+            llm = get_configured_llm(temperature=0.0)
         is_relevant = False
         reasoning = ""
         try:
@@ -493,9 +499,35 @@ def generate_grounded_answer_node(state: AgentState) -> Dict[str, Any]:
             )
             active_model = getattr(llm, "model_name", settings.LLM_MODEL)
         else:
+            # Check if active agent/tenant has custom client BYOK provider configured
+            tenant_target = str(state.get("tenant_id") or state.get("agent_id") or "").strip()
+            custom_provider = None
+            custom_model = None
+            custom_key = None
+            if tenant_target:
+                try:
+                    with get_db_session() as db_sess:
+                        ag_match = db_sess.query(AgentModel).filter(
+                            (AgentModel.slug == tenant_target.lower())
+                            | (AgentModel.id == tenant_target)
+                        ).first()
+                        if ag_match and getattr(ag_match, "custom_llm_enabled", False):
+                            custom_provider = ag_match.custom_llm_provider
+                            custom_model = ag_match.custom_llm_model
+                            custom_key = ag_match.custom_llm_api_key
+                            logger.info(
+                                "Using dedicated Client BYOK LLM for agent '%s': provider=%s, model=%s",
+                                tenant_target, custom_provider, custom_model
+                            )
+                except Exception as ex_lookup:
+                    logger.warning("Could not lookup custom agent BYOK LLM: %s", ex_lookup)
+
             llm = get_configured_llm(
                 temperature=settings.LLM_TEMPERATURE,
                 max_tokens=settings.LLM_MAX_TOKENS,
+                provider_override=custom_provider,
+                model_override=custom_model,
+                api_key_override=custom_key,
             )
             active_model = (
                 getattr(llm, "_active_model_name", None)

@@ -1,7 +1,23 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-surface: #f1f5f9;
+    --border-color: #e2e8f0;
+    --accent: #ff6a00;
+    --accent-hover: #e55f00;
+    --accent-subtle: rgba(255, 106, 0, 0.12);
+    --text-primary: #0f172a;
+    --text-muted: #64748b;
+    --badge-grounded: #16a34a;
+    --badge-unanswered: #d97706;
+  }
+
+  .dark {
     --bg-main: #0e1117;
     --bg-card: #161b22;
     --bg-surface: #1f242c;
@@ -15,6 +31,10 @@
     --badge-unanswered: #d97706;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: var(--bg-main);
     color: var(--text-primary);
@@ -22,6 +42,7 @@
     margin: 0;
     padding: 0;
     min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
@@ -32,21 +53,66 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0e1117;
+  background: var(--bg-main);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #30363d;
+  background: var(--border-color);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #484f58;
+  background: var(--text-muted);
+}
+
+/* Prominent Visible Modal Scrollbar (Exact match for Setup Guide Modal) */
+.modal-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 rgba(0, 0, 0, 0.05);
+}
+
+.modal-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  display: block;
+}
+
+.modal-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.modal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.dark .modal-scrollbar {
+  scrollbar-color: #475569 rgba(255, 255, 255, 0.05);
+}
+
+.dark .modal-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dark .modal-scrollbar::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark .modal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 
 /* Markdown styling inside chat messages */
 .prose-a7 {
-  color: #e6edf3;
+  color: var(--text-primary);
   font-size: 0.925rem;
   line-height: 1.625;
 }
@@ -65,7 +131,7 @@
 }
 
 .prose-a7 strong {
-  color: #ffffff;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -89,18 +155,18 @@
 }
 
 .prose-a7 code {
-  background-color: #1f242c;
-  color: #ff9d42;
+  background-color: var(--bg-surface);
+  color: #ff6a00;
   padding: 0.15rem 0.35rem;
   border-radius: 0.25rem;
   font-size: 0.85em;
-  border: 1px solid #30363d;
+  border: 1px solid var(--border-color);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 .prose-a7 pre {
-  background-color: #0b0e14;
-  border: 1px solid #30363d;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   padding: 0.75rem 1rem;
   overflow-x: auto;
@@ -112,7 +178,7 @@
   background-color: transparent;
   border: none;
   padding: 0;
-  color: #e6edf3;
+  color: var(--text-primary);
 }
 
 .prose-a7 table {
@@ -125,13 +191,13 @@
 
 .prose-a7 th,
 .prose-a7 td {
-  border: 1px solid #30363d;
+  border: 1px solid var(--border-color);
   padding: 0.4rem 0.65rem;
   text-align: left;
 }
 
 .prose-a7 th {
-  background-color: #1f242c;
+  background-color: var(--bg-surface);
   color: #ff6a00;
   font-weight: 600;
 }
@@ -141,6 +207,6 @@
   padding-left: 0.75rem;
   margin-left: 0;
   margin-right: 0;
-  color: #94a3b8;
+  color: var(--text-muted);
   font-style: italic;
 }

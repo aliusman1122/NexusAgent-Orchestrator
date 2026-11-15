@@ -40,6 +40,10 @@ export interface Agent {
   welcomeMessage?: string;
   is_default?: boolean;
   isDefault?: boolean;
+  custom_llm_enabled?: boolean;
+  custom_llm_provider?: string;
+  custom_llm_model?: string;
+  custom_llm_api_key?: string;
 }
 
 /**
@@ -68,7 +72,7 @@ export function getInitialGreeting(
   // 1. If explicit custom welcome message is saved in DB, use it
   const customWelcome =
     agent?.welcome_message?.trim() ||
-    (agent as any)?.welcomeMessage?.trim();
+    agent?.welcomeMessage?.trim();
 
   if (customWelcome && customWelcome.length > 0) {
     return customWelcome;
@@ -91,10 +95,10 @@ const STORAGE_EVENT = "a7_agents_storage_update";
 export const DEFAULT_AGENTS: Agent[] = [
   {
     id: "a7_logics",
-    name: "A7 Logics Assistant",
+    name: "NexusAgent Assistant",
     slug: "a7_logics",
     is_default: true,
-    description: "Executive Client Representative for A7 Logics services, pricing, and tech stacks.",
+    description: "Executive Client Representative for NexusAgent services, pricing, and tech stacks.",
     tone: "Executive",
     persona: "Executive",
     status: "Ready",
@@ -215,8 +219,8 @@ export function getAgents(): Agent[] {
           ...sanitized[existingIdx],
           id: "a7_logics",
           slug: "a7_logics",
-          name: "A7 Logics Assistant",
-          description: "Executive Client Representative for A7 Logics services, pricing, and tech stacks.",
+          name: "NexusAgent Assistant",
+          description: "Executive Client Representative for NexusAgent services, pricing, and tech stacks.",
           chunksCount: 21,
           status: "Ready",
           tone: "Executive",

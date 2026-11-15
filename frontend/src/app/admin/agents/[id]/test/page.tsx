@@ -305,13 +305,13 @@ export default function AgentTestPlaygroundPage() {
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] max-w-5xl mx-auto w-full px-4 sm:px-6 py-4">
       {/* Distraction-Free Header */}
-      <div className="pb-3 border-b border-[#30363D] flex items-center justify-between gap-4">
+      <div className="pb-3 border-b border-slate-200 dark:border-[#30363D] flex items-center justify-between gap-4">
         {/* Agent Info & Persona */}
         <div className="flex items-center gap-3">
           <Link
             href={`/admin/agents/${agent.id}`}
             title="Back to Knowledge Base"
-            className="p-2 rounded-xl text-[#8B949E] hover:text-white hover:bg-[#161B22] border border-[#30363D] transition-colors"
+            className="p-2 rounded-xl text-slate-500 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 dark:text-[#8B949E] dark:hover:text-white dark:bg-[#161B22] dark:border-[#30363D] transition-colors shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
@@ -320,22 +320,22 @@ export default function AgentTestPlaygroundPage() {
             {getAgentAvatar()}
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-base font-bold text-white tracking-tight">
+                <h1 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
                   {cleanAgentName}
                 </h1>
                 {agent.status === "Ready" ? (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     Ready
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-300 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700">
                     {agent.status}
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-2 text-[11px] text-[#8B949E]">
-                <span>Persona: <strong className="text-[#E6EDF3]">{agent.tone}</strong></span>
+              <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-[#8B949E]">
+                <span>Persona: <strong className="text-slate-700 dark:text-[#E6EDF3]">{agent.tone}</strong></span>
                 <span>•</span>
                 <span>Active Knowledge Base</span>
               </div>
@@ -347,7 +347,7 @@ export default function AgentTestPlaygroundPage() {
         <div className="flex items-center gap-2">
           <Link
             href={`/admin/agents/${agent.id}`}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#161B22] hover:bg-[#1F242C] text-xs font-medium text-[#8B949E] hover:text-[#E6EDF3] border border-[#30363D] transition-colors"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-xs font-medium text-slate-700 hover:text-[#FF6A00] border border-slate-200 dark:bg-[#161B22] dark:hover:bg-[#1F242C] dark:text-[#8B949E] dark:hover:text-[#E6EDF3] dark:border-[#30363D] transition-colors shadow-sm"
           >
             <Settings className="w-3.5 h-3.5 text-[#FF6A00]" />
             <span>Configure KB</span>
@@ -356,7 +356,7 @@ export default function AgentTestPlaygroundPage() {
           <button
             onClick={handleResetConversation}
             title="Reset conversation"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#161B22] hover:bg-[#1F242C] text-xs font-medium text-[#8B949E] hover:text-white border border-[#30363D] hover:border-[#FF6A00]/40 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-xs font-medium text-slate-700 hover:text-slate-900 border border-slate-200 dark:bg-[#161B22] dark:hover:bg-[#1F242C] dark:text-[#8B949E] dark:hover:text-white dark:border-[#30363D] hover:border-[#FF6A00]/40 transition-colors shadow-sm cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Reset Conversation</span>
@@ -373,25 +373,25 @@ export default function AgentTestPlaygroundPage() {
               <Bot className="w-8 h-8" />
             </div>
 
-            <h2 className="text-xl font-bold text-white tracking-tight">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
               Test Playground: {cleanAgentName}
             </h2>
-            <p className="text-xs text-[#8B949E] mt-1 max-w-sm leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-[#8B949E] mt-1 max-w-sm leading-relaxed">
               {agent.description}
             </p>
 
             <div className="mt-6 w-full space-y-2 text-left">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-[#8B949E] text-center mb-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-[#8B949E] text-center mb-2">
                 Suggested Prompts for this Bot
               </p>
               {getPromptStarters().map((starter, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleSendMessage(starter)}
-                  className="w-full p-3 rounded-xl bg-[#161B22] hover:bg-[#1F242C] border border-[#30363D] hover:border-[#FF6A00]/50 text-left text-xs text-[#E6EDF3] hover:text-white transition-all flex items-center justify-between group shadow-sm"
+                  className="w-full p-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 dark:bg-[#161B22] dark:hover:bg-[#1F242C] dark:border-[#30363D] hover:border-[#FF6A00]/50 text-left text-xs text-slate-800 hover:text-slate-900 dark:text-[#E6EDF3] dark:hover:text-white transition-all flex items-center justify-between group shadow-sm cursor-pointer"
                 >
                   <span className="line-clamp-1">{starter}</span>
-                  <Sparkles className="w-3.5 h-3.5 text-[#8B949E] group-hover:text-[#FF6A00] shrink-0 ml-2" />
+                  <Sparkles className="w-3.5 h-3.5 text-slate-400 dark:text-[#8B949E] group-hover:text-[#FF6A00] shrink-0 ml-2" />
                 </button>
               ))}
             </div>
@@ -409,7 +409,7 @@ export default function AgentTestPlaygroundPage() {
                   }`}
                 >
                   {!isUser && (
-                    <div className="w-8 h-8 rounded-xl bg-[#161B22] border border-[#30363D] flex items-center justify-center text-[#FF6A00] shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 dark:bg-[#161B22] dark:border-[#30363D] flex items-center justify-center text-[#FF6A00] shrink-0 mt-0.5 shadow-sm">
                       <Bot className="w-4 h-4" />
                     </div>
                   )}
@@ -417,14 +417,14 @@ export default function AgentTestPlaygroundPage() {
                   <div
                     className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 text-xs sm:text-sm leading-relaxed ${
                       isUser
-                        ? "bg-[#FF6A00]/15 border border-[#FF6A00]/40 text-white rounded-tr-sm shadow-md"
-                        : "bg-[#161B22] border border-[#30363D] text-[#E6EDF3] rounded-tl-sm shadow-md"
+                        ? "bg-[#FF6A00] text-white rounded-tr-sm shadow-md font-medium"
+                        : "bg-white border border-slate-200 dark:bg-[#161B22] dark:border-[#30363D] text-slate-800 dark:text-[#E6EDF3] rounded-tl-sm shadow-sm"
                     }`}
                   >
                     <div className="whitespace-pre-wrap font-sans">
                       {msg.text}
                     </div>
-                    <span className="block mt-2 text-[10px] text-[#8B949E] text-right">
+                    <span className={`block mt-2 text-[10px] text-right ${isUser ? "text-orange-100" : "text-slate-400 dark:text-[#8B949E]"}`}>
                       {msg.timestamp}
                     </span>
                   </div>
@@ -441,10 +441,10 @@ export default function AgentTestPlaygroundPage() {
             {/* Animated 3-dot Typing Indicator */}
             {isTyping && (
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#161B22] border border-[#30363D] flex items-center justify-center text-[#FF6A00] shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 dark:bg-[#161B22] dark:border-[#30363D] flex items-center justify-center text-[#FF6A00] shrink-0 shadow-sm">
                   <Bot className="w-4 h-4" />
                 </div>
-                <div className="p-3.5 rounded-2xl bg-[#161B22] border border-[#30363D] flex items-center gap-1.5">
+                <div className="p-3.5 rounded-2xl bg-white border border-slate-200 dark:bg-[#161B22] dark:border-[#30363D] flex items-center gap-1.5 shadow-sm">
                   <div className="w-2 h-2 rounded-full bg-[#FF6A00] animate-bounce [animation-delay:-0.3s]" />
                   <div className="w-2 h-2 rounded-full bg-[#FF6A00] animate-bounce [animation-delay:-0.15s]" />
                   <div className="w-2 h-2 rounded-full bg-[#FF6A00] animate-bounce" />
@@ -458,8 +458,8 @@ export default function AgentTestPlaygroundPage() {
       </div>
 
       {/* Bottom Conversational Input Bar */}
-      <div className="pt-2 border-t border-[#30363D]">
-        <div className="relative rounded-2xl bg-[#161B22] border border-[#30363D] focus-within:border-[#FF6A00] focus-within:ring-1 focus-within:ring-[#FF6A00] transition-all p-2 flex items-end gap-2 shadow-xl">
+      <div className="pt-2 border-t border-slate-200 dark:border-[#30363D]">
+        <div className="relative rounded-2xl bg-white dark:bg-[#161B22] border border-slate-300 dark:border-[#30363D] focus-within:border-[#FF6A00] focus-within:ring-1 focus-within:ring-[#FF6A00] transition-all p-2 flex items-end gap-2 shadow-sm dark:shadow-xl">
           <textarea
             ref={textareaRef}
             rows={2}
@@ -467,24 +467,24 @@ export default function AgentTestPlaygroundPage() {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={`Message ${agent.name}...`}
-            className="flex-1 bg-transparent text-sm text-white placeholder-[#8B949E] outline-none resize-none px-2 py-1 max-h-32"
+            className="flex-1 bg-transparent text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-[#8B949E] outline-none resize-none px-2 py-1 max-h-32"
           />
 
           <button
             type="button"
             disabled={!inputValue.trim() || isTyping}
             onClick={() => handleSendMessage()}
-            className="p-2.5 rounded-xl bg-[#FF6A00] hover:bg-[#E55F00] text-white disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-95 shadow-md shadow-[#FF6A00]/25"
+            className="p-2.5 rounded-xl bg-[#FF6A00] hover:bg-[#E55F00] text-white disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-95 shadow-md shadow-[#FF6A00]/25 cursor-pointer"
           >
             <Send className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="flex items-center justify-between mt-2 px-1 text-[11px] text-[#8B949E]">
+        <div className="flex items-center justify-between mt-2 px-1 text-[11px] text-slate-500 dark:text-[#8B949E]">
           <span className="hidden sm:inline">
-            Press <strong className="text-[#E6EDF3]">Enter</strong> to send, <strong className="text-[#E6EDF3]">Shift + Enter</strong> for new line
+            Press <strong className="text-slate-700 dark:text-[#E6EDF3]">Enter</strong> to send, <strong className="text-slate-700 dark:text-[#E6EDF3]">Shift + Enter</strong> for new line
           </span>
-          <span className="text-emerald-400 font-mono text-[10px]">
+          <span className="text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">
             Enterprise Mock Playground • Local Verified Storage
           </span>
         </div>

@@ -84,6 +84,10 @@ class AgentModel(Base):
     target_url = Column(String(512), nullable=True)
     system_prompt = Column(Text, nullable=True)
     welcome_message = Column(Text, nullable=True)
+    custom_llm_enabled = Column(Boolean, default=False, nullable=True)
+    custom_llm_provider = Column(String(32), nullable=True)
+    custom_llm_model = Column(String(128), nullable=True)
+    custom_llm_api_key = Column(String(256), nullable=True)
     created_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
@@ -123,6 +127,10 @@ class AgentModel(Base):
             "systemPrompt": self.system_prompt or "",
             "welcome_message": self.welcome_message or "",
             "welcomeMessage": self.welcome_message or "",
+            "custom_llm_enabled": bool(getattr(self, "custom_llm_enabled", False)),
+            "custom_llm_provider": getattr(self, "custom_llm_provider", "") or "",
+            "custom_llm_model": getattr(self, "custom_llm_model", "") or "",
+            "custom_llm_api_key": getattr(self, "custom_llm_api_key", "") or "",
             "chunks_count": total_chunks,
             "chunksCount": total_chunks,
             "avatarIcon": (
@@ -261,4 +269,36 @@ class TokenUsageLogModel(Base):
             f"<TokenUsageLogModel(id='{self.id}', agent_id='{self.agent_id}', "
             f"model='{self.model_name}', prompt={self.prompt_tokens}, completion={self.completion_tokens}, total={self.total_tokens})>"
         )
+
+
+class AdminUserModel(Base):
+    """Database model for Super Admin and Dashboard credentials."""
+
+    __tablename__ = "admin_users"
+
+    id = Column(String(64), primary_key=True, default=lambda: str(uuid.uuid4()))
+    email = Column(String(128), unique=True, index=True, nullable=False)
+    password_hash = Column(String(256), nullable=False)
+    name = Column(String(128), default="NexusAgent Super Admin", nullable=False)
+    role = Column(String(32), default="superadmin", nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        server_default=func.now(),
+        nullable=False,
+    )
+    last_login_at = Column(DateTime(timezone=True), nullable=True)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "email": self.email,
+            "name": self.name,
+            "role": self.role,
+            "is_active": self.is_active,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "last_login_at": self.last_login_at.isoformat() if self.last_login_at else None,
+        }
+
 

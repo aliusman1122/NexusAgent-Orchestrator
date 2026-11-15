@@ -10,6 +10,7 @@ import os
 from typing import Any, Dict, Optional, Tuple
 from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 from config.settings import settings
 from core.database.connection import get_db_session
@@ -41,6 +42,8 @@ def get_configured_llm_info() -> Tuple[str, str]:
 
     if active_provider == "openai":
         active_provider = "openrouter"
+    elif active_provider == "google":
+        active_provider = "gemini"
 
     if active_provider == "groq" and (
         active_model.startswith("anthropic/")
@@ -64,11 +67,13 @@ def get_configured_llm(
     max_tokens: Optional[int] = None,
     provider_override: Optional[str] = None,
     model_override: Optional[str] = None,
+    api_key_override: Optional[str] = None,
 ) -> Any:
     """Instantiate and return the currently configured LLM instance.
 
     Reads active_provider, active_model, and API keys from app_settings with
-    environment variable fallbacks. Supports Groq LPUs and OpenRouter Unified.
+    environment variable fallbacks. Supports Groq LPUs, Google Gemini, and OpenRouter Unified.
+    Supports per-agent client BYOK overrides via api_key_override, provider_override, and model_override.
     """
     db_settings = get_stored_app_settings()
 
@@ -80,6 +85,8 @@ def get_configured_llm(
 
     if active_provider == "openai":
         active_provider = "openrouter"
+    elif active_provider == "google":
+        active_provider = "gemini"
 
     active_model = (
         model_override
@@ -92,14 +99,29 @@ def get_configured_llm(
     tokens = settings.LLM_MAX_TOKENS if max_tokens is None else max_tokens
 
     groq_api_key = (
-        db_settings.get("groq_api_key")
-        or settings.GROQ_API_KEY
-        or os.getenv("GROQ_API_KEY", "")
-    ).strip()
+        api_key_override.strip() if (api_key_override and active_provider == "groq")
+        else (
+            db_settings.get("groq_api_key")
+            or settings.GROQ_API_KEY
+            or os.getenv("GROQ_API_KEY", "")
+        ).strip()
+    )
+    gemini_api_key = (
+        api_key_override.strip() if (api_key_override and active_provider == "gemini")
+        else (
+            db_settings.get("gemini_api_key")
+            or settings.GEMINI_API_KEY
+            or os.getenv("GEMINI_API_KEY", "")
+            or os.getenv("GOOGLE_API_KEY", "")
+        ).strip()
+    )
     openrouter_api_key = (
-        db_settings.get("openrouter_api_key")
-        or os.getenv("OPENROUTER_API_KEY", "")
-    ).strip()
+        api_key_override.strip() if (api_key_override and active_provider == "openrouter")
+        else (
+            db_settings.get("openrouter_api_key")
+            or os.getenv("OPENROUTER_API_KEY", "")
+        ).strip()
+    )
 
     # Known native Groq model families hosted on Groq LPUs
     groq_native_prefixes = (
@@ -113,13 +135,23 @@ def get_configured_llm(
     )
 
     # Infer or fallback provider
-    if active_provider == "openrouter":
+    if active_provider == "gemini":
+        if not gemini_api_key and groq_api_key:
+            logger.warning("Gemini API key missing, falling back to Groq.")
+            active_provider = "groq"
+    elif active_provider == "openrouter":
         if not openrouter_api_key and groq_api_key:
             logger.warning("OpenRouter API key missing, falling back to Groq.")
             active_provider = "groq"
     elif active_provider == "groq":
-        # Only switch to OpenRouter if model is explicitly an external provider AND openrouter_api_key exists
+        # Check if model is explicitly a Gemini native model
         if (
+            active_model.startswith("gemini/")
+            or (active_model.startswith("gemini-") and not "/" in active_model)
+        ) and gemini_api_key:
+            active_provider = "gemini"
+        # Only switch to OpenRouter if model is explicitly an external provider AND openrouter_api_key exists
+        elif (
             not any(active_model.startswith(p) for p in groq_native_prefixes)
             and (
                 active_model.startswith("anthropic/")
@@ -133,7 +165,20 @@ def get_configured_llm(
         ):
             active_provider = "openrouter"
 
-    if active_provider == "groq":
+    if active_provider == "gemini":
+        clean_model = active_model.replace("gemini/", "").replace("google/", "")
+        llm = ChatGoogleGenerativeAI(
+            model=clean_model,
+            google_api_key=gemini_api_key or "missing_gemini_key",
+            temperature=temp,
+            max_output_tokens=tokens,
+        )
+        object.__setattr__(llm, "_active_model_name", clean_model)
+        object.__setattr__(llm, "_active_provider_name", "gemini")
+        logger.debug("Initialized Google Gemini LLM: model=%s", clean_model)
+        return llm
+
+    elif active_provider == "groq":
         clean_model = active_model.replace("groq/", "")
         llm = ChatGroq(
             model_name=clean_model,

@@ -22,5 +22,6 @@ uvicorn>=0.28.0
 trafilatura>=1.6.0
 markdownify>=0.11.6
 langchain-openai
+langchain-google-genai
 psycopg[binary]
 hnswlib

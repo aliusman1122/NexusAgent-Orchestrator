@@ -225,28 +225,28 @@ export function AgentPlayground() {
   };
 
   return (
-    <section id="playground" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <section id="playground" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-12 scroll-mt-16">
       {/* Section Header */}
-      <div className="text-center max-w-3xl mx-auto mb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF6A00]/10 border border-[#FF6A00]/30 text-xs font-semibold text-[#FF6A00] mb-3">
+      <div className="text-center max-w-3xl mx-auto mb-5 sm:mb-6">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/30 text-xs font-semibold text-[#FF6A00] mb-2 sm:mb-2.5">
           <Terminal className="w-3.5 h-3.5" />
           <span>Interactive Agent Test Bench</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white mt-1.5 sm:mt-2 tracking-tight">
           Test Autonomous Agents in Real-Time
         </h2>
-        <p className="mt-3 text-sm sm:text-base text-[#94A3B8]">
+        <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-[#94A3B8]">
           Switch personas, inspect response latency, and experience strict factual grounding 
-          powered by the headless LangGraph pipeline.
+          powered by verified business knowledge and real-time AI inference.
         </p>
       </div>
 
       {/* Playground Card Container */}
-      <div className="max-w-5xl mx-auto rounded-2xl bg-[#161B22]/95 border border-[#30363D] shadow-2xl overflow-hidden backdrop-blur-xl">
+      <div className="max-w-5xl mx-auto rounded-2xl bg-white dark:bg-[#161B22]/95 border border-slate-200 dark:border-[#30363D] shadow-xl dark:shadow-2xl overflow-hidden backdrop-blur-xl transition-colors">
         {/* Persona Switcher Tabs */}
-        <div className="p-3 bg-[#0E1117]/80 border-b border-[#30363D] flex flex-wrap items-center justify-between gap-3">
+        <div className="p-3 bg-slate-50 dark:bg-[#0E1117]/80 border-b border-slate-200 dark:border-[#30363D] flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-mono text-[#64748B] px-2 hidden sm:inline">
+            <span className="text-xs font-mono text-slate-500 dark:text-[#64748B] px-2 hidden sm:inline">
               PERSONA:
             </span>
             {PERSONA_OPTIONS.map((persona) => {
@@ -258,7 +258,7 @@ export function AgentPlayground() {
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                     isSelected
                       ? "bg-[#FF6A00] text-white shadow-md shadow-[#FF6A00]/25"
-                      : "bg-[#161B22] text-[#94A3B8] hover:text-white hover:bg-[#1F242C] border border-[#30363D]"
+                      : "bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 dark:bg-[#161B22] dark:text-[#94A3B8] dark:hover:text-white dark:hover:bg-[#1F242C] dark:border-[#30363D]"
                   }`}
                 >
                   <Bot className="w-3.5 h-3.5" />
@@ -270,7 +270,7 @@ export function AgentPlayground() {
 
           <button
             onClick={handleClearHistory}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-[#94A3B8] hover:text-white hover:bg-[#1F242C] border border-[#30363D] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 dark:text-[#94A3B8] dark:hover:text-white dark:bg-transparent dark:hover:bg-[#1F242C] dark:border-[#30363D] transition-colors"
             title="Reset sandbox history"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -279,14 +279,14 @@ export function AgentPlayground() {
         </div>
 
         {/* Live Grounding & Latency Inspection Bar */}
-        <div className="px-4 py-2 bg-[#12161E] border-b border-[#30363D]/60 flex flex-wrap items-center justify-between text-[11px] font-mono text-[#94A3B8] gap-3">
+        <div className="px-4 py-2 bg-slate-100/60 dark:bg-[#12161E] border-b border-slate-200 dark:border-[#30363D]/60 flex flex-wrap items-center justify-between text-[11px] font-mono text-slate-600 dark:text-[#94A3B8] gap-3">
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1 text-emerald-400">
+            <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Grounding: 99.4% Factual</span>
             </span>
-            <span className="text-[#30363D]">|</span>
-            <span className="flex items-center gap-1 text-[#38BDF8]">
+            <span className="text-slate-300 dark:text-[#30363D]">|</span>
+            <span className="flex items-center gap-1 text-sky-600 dark:text-[#38BDF8]">
               <Cpu className="w-3.5 h-3.5" />
               <span>Mode: {selectedPersona.tone} Tone</span>
             </span>
@@ -294,18 +294,18 @@ export function AgentPlayground() {
 
           <div className="flex items-center gap-3">
             {lastLatency !== null && (
-              <span className="flex items-center gap-1 text-[#CBD5E1]">
+              <span className="flex items-center gap-1 text-slate-700 dark:text-[#CBD5E1]">
                 <Clock className="w-3.5 h-3.5 text-[#FF6A00]" />
                 <span>Round-Trip: {lastLatency}ms</span>
               </span>
             )}
-            <span className="text-[#30363D]">|</span>
-            <span className="text-[#64748B]">Session: {sessionId.substring(0, 12)}</span>
+            <span className="text-slate-300 dark:text-[#30363D]">|</span>
+            <span className="text-slate-500 dark:text-[#64748B]">Session: {sessionId.substring(0, 12)}</span>
           </div>
         </div>
 
         {/* Message Stream Area */}
-        <div className="h-[380px] sm:h-[420px] overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#0E1117]/60">
+        <div className="h-[280px] sm:h-[300px] overflow-y-auto p-4 sm:p-5 space-y-3.5 bg-slate-50/50 dark:bg-[#0E1117]/60">
           {messages.map((msg) => {
             const isUser = msg.role === "user";
             return (
@@ -316,7 +316,7 @@ export function AgentPlayground() {
                 {/* Avatar Icon */}
                 <div className="shrink-0 mt-1">
                   {isUser ? (
-                    <div className="w-8 h-8 rounded-xl bg-[#1F242C] border border-[#30363D] flex items-center justify-center text-[#94A3B8]">
+                    <div className="w-8 h-8 rounded-xl bg-slate-200 border border-slate-300 dark:bg-[#1F242C] dark:border-[#30363D] flex items-center justify-center text-slate-600 dark:text-[#94A3B8]">
                       <User className="w-4 h-4" />
                     </div>
                   ) : (
@@ -331,13 +331,13 @@ export function AgentPlayground() {
                   className={`max-w-[85%] sm:max-w-[78%] rounded-2xl ${
                     isUser
                       ? "px-4 py-3 bg-[#FF6A00] text-white rounded-tr-none font-medium shadow-md shadow-[#FF6A00]/15"
-                      : "px-4 py-3.5 bg-[#161B22] text-[#E6EDF3] border border-[#30363D] rounded-tl-none shadow-sm"
+                      : "px-4 py-3.5 bg-white text-slate-800 border border-slate-200 dark:bg-[#161B22] dark:text-[#E6EDF3] dark:border-[#30363D] rounded-tl-none shadow-sm"
                   }`}
                 >
                   {isUser ? (
                     <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                   ) : (
-                    <div className="text-sm text-[#E6EDF3] leading-relaxed space-y-2 prose-a7 [&>p]:leading-relaxed [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:my-2 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-1 [&>ol]:my-2 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-1 [&>strong]:text-white [&>strong]:font-semibold">
+                    <div className="text-sm text-slate-800 dark:text-[#E6EDF3] leading-relaxed space-y-2 prose-a7 [&>p]:leading-relaxed [&>p]:mb-2 [&>p:last-child]:mb-0 [&>ul]:my-2 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:space-y-1 [&>ol]:my-2 [&>ol]:list-decimal [&>ol]:pl-5 [&>ol]:space-y-1 [&>strong]:text-slate-900 dark:[&>strong]:text-white [&>strong]:font-semibold">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {msg.content}
                       </ReactMarkdown>
@@ -347,7 +347,7 @@ export function AgentPlayground() {
                   {/* Message Telemetry Footer */}
                   <div
                     className={`mt-2 flex items-center gap-2 text-[10px] font-mono ${
-                      isUser ? "text-orange-100/70 justify-end" : "text-[#64748B] justify-end"
+                      isUser ? "text-orange-100/80 justify-end" : "text-slate-400 dark:text-[#64748B] justify-end"
                     }`}
                   >
                     {msg.latencyMs && <span>{msg.latencyMs}ms</span>}
@@ -365,7 +365,7 @@ export function AgentPlayground() {
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#FF6A00] to-[#E55F00] flex items-center justify-center text-white shadow-md shadow-[#FF6A00]/20 shrink-0 mt-1">
                 <Bot className="w-4 h-4 animate-pulse" />
               </div>
-              <div className="px-4 py-3 rounded-2xl rounded-tl-none bg-[#161B22] border border-[#30363D] text-xs text-[#94A3B8] flex items-center gap-2.5">
+              <div className="px-4 py-3 rounded-2xl rounded-tl-none bg-white border border-slate-200 dark:bg-[#161B22] dark:border-[#30363D] text-xs text-slate-600 dark:text-[#94A3B8] flex items-center gap-2.5 shadow-sm">
                 <div className="flex gap-1 items-center">
                   <span className="w-2 h-2 rounded-full bg-[#FF6A00] animate-bounce [animation-delay:-0.3s]" />
                   <span className="w-2 h-2 rounded-full bg-[#FF6A00] animate-bounce [animation-delay:-0.15s]" />
@@ -380,8 +380,8 @@ export function AgentPlayground() {
         </div>
 
         {/* Preset Prompt Starters */}
-        <div className="px-4 py-2.5 bg-[#12161E] border-t border-[#30363D]/60 flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-mono text-[#64748B] mr-1 hidden sm:inline">
+        <div className="px-4 py-2.5 bg-slate-50 dark:bg-[#12161E] border-t border-slate-200 dark:border-[#30363D]/60 flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-mono text-slate-500 dark:text-[#64748B] mr-1 hidden sm:inline">
             SUGGESTIONS:
           </span>
           {selectedPersona.promptStarters.map((starter, idx) => (
@@ -389,7 +389,7 @@ export function AgentPlayground() {
               key={idx}
               onClick={() => handleSendMessage(starter)}
               disabled={isLoading}
-              className="text-xs text-left px-3 py-1 rounded-lg bg-[#161B22] hover:bg-[#1F242C] text-[#CBD5E1] hover:text-[#FF6A00] border border-[#30363D] hover:border-[#FF6A00]/40 transition-colors truncate max-w-full sm:max-w-xs"
+              className="text-xs text-left px-3 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-700 hover:text-[#FF6A00] border border-slate-200 dark:bg-[#161B22] dark:hover:bg-[#1F242C] dark:text-[#CBD5E1] dark:hover:text-[#FF6A00] dark:border-[#30363D] hover:border-[#FF6A00]/40 transition-colors truncate max-w-full sm:max-w-xs shadow-sm"
               title={starter}
             >
               &quot;{starter}&quot;
@@ -398,7 +398,7 @@ export function AgentPlayground() {
         </div>
 
         {/* Input Bar */}
-        <div className="p-3 sm:p-4 bg-[#161B22] border-t border-[#30363D]">
+        <div className="p-3 sm:p-4 bg-white dark:bg-[#161B22] border-t border-slate-200 dark:border-[#30363D]">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -406,7 +406,7 @@ export function AgentPlayground() {
             }}
             className="flex items-end gap-2.5"
           >
-            <div className="flex-1 relative rounded-xl bg-[#0E1117] border border-[#30363D] focus-within:border-[#FF6A00] focus-within:ring-1 focus-within:ring-[#FF6A00] transition-all">
+            <div className="flex-1 relative rounded-xl bg-slate-50 dark:bg-[#0E1117] border border-slate-300 dark:border-[#30363D] focus-within:border-[#FF6A00] focus-within:ring-1 focus-within:ring-[#FF6A00] transition-all">
               <textarea
                 ref={textareaRef}
                 value={inputValue}
@@ -414,7 +414,7 @@ export function AgentPlayground() {
                 onKeyDown={handleKeyDown}
                 rows={1}
                 placeholder={`Query ${selectedPersona.name}... (Press Enter to submit)`}
-                className="w-full bg-transparent px-4 py-3 text-xs sm:text-sm text-[#E6EDF3] placeholder-[#64748B] focus:outline-none resize-none max-h-32"
+                className="w-full bg-transparent px-4 py-3 text-xs sm:text-sm text-slate-900 dark:text-[#E6EDF3] placeholder-slate-400 dark:placeholder-[#64748B] focus:outline-none resize-none max-h-32"
                 disabled={isLoading}
               />
             </div>
@@ -422,7 +422,7 @@ export function AgentPlayground() {
             <button
               type="submit"
               disabled={!inputValue.trim() || isLoading}
-              className="h-11 px-4 sm:px-5 rounded-xl bg-[#FF6A00] hover:bg-[#E55F00] active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-2 text-white font-semibold text-xs sm:text-sm shadow-md shadow-[#FF6A00]/25 transition-all shrink-0"
+              className="h-11 px-4 sm:px-5 rounded-xl bg-[#FF6A00] hover:bg-[#E55F00] active:scale-95 disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-2 text-white font-semibold text-xs sm:text-sm shadow-md shadow-[#FF6A00]/25 transition-all shrink-0 cursor-pointer"
               aria-label="Send query"
             >
               <span>Send</span>

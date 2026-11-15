@@ -1,15 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import React from "react";
 import {
   Database,
-  ShieldCheck,
-  Zap,
-  BellRing,
-  ArrowRight,
+  Cpu,
+  Code2,
   CheckCircle2,
-  Layers,
 } from "lucide-react";
 
 interface PillarItem {
@@ -20,8 +16,6 @@ interface PillarItem {
   badge: string;
   summary: string;
   bullets: string[];
-  consoleRoute: string;
-  routeLabel: string;
 }
 
 const PILLARS: PillarItem[] = [
@@ -29,145 +23,101 @@ const PILLARS: PillarItem[] = [
     id: "kb-sync",
     icon: Database,
     iconColor: "text-[#FF6A00]",
-    title: "Dynamic Knowledge Base Sync",
-    badge: "Dual-Tier Storage",
+    title: "Multi-Source Knowledge RAG",
+    badge: "ChromaDB + PostgreSQL",
     summary:
-      "Enterprise document ingestion across multi-format files (PDF, DOCX, XLSX) and deep recursive web crawlers with automated vector deduplication.",
+      "Enterprise document ingestion across PDFs, Word DOCX, text notes, and website URLs with automated vector chunking and deduplication.",
     bullets: [
-      "Real-time sync to Supabase PostgreSQL metadata and ChromaDB vectors",
-      "Chunk preview and human verification before index commitment",
       "Per-tenant collection isolation with zero cross-tenant contamination",
+      "Real-time chunk preview and human verification before indexing",
+      "Instant ChromaDB semantic search with cosine similarity scoring",
     ],
-    consoleRoute: "/admin/agents",
-    routeLabel: "Manage Knowledge Repositories",
   },
   {
-    id: "guardrails",
-    icon: ShieldCheck,
-    iconColor: "text-[#10B981]",
-    title: "Deterministic Factual Grounding",
-    badge: "Zero Hallucination",
+    id: "ai-inference",
+    icon: Cpu,
+    iconColor: "text-[#0094C6]",
+    title: "Universal & Dedicated AI (BYOK)",
+    badge: "Multi-Model Hub",
     summary:
-      "Every user prompt passes through stateful LangGraph nodes that compute cosine similarity thresholds against verified enterprise vector embeddings.",
+      "Run agents on platform-managed inference or provide client-specific API keys for dedicated Google Gemini, Groq Cloud, or Claude models.",
     bullets: [
-      "Strict citation attribution with source file and section tagging",
-      "Automated rejection of speculative or ungrounded claims",
-      "Stateful session persistence isolated per user conversation",
+      "Ultra-fast inference via Groq LPU and Google Gemini 1.5/2.0",
+      "Client BYOK toggle allowing tenants to use their own private quotas",
+      "Automated fallback to platform universal model if key is unset",
     ],
-    consoleRoute: "/admin/agents",
-    routeLabel: "Inspect Agent Guardrails",
   },
   {
-    id: "token-telemetry",
-    icon: Zap,
-    iconColor: "text-[#38BDF8]",
-    title: "Token Telemetry & Rate Governance",
-    badge: "Live Provider Quotas",
+    id: "widget-embed",
+    icon: Code2,
+    iconColor: "text-emerald-500",
+    title: "1-Line Embeddable Widget",
+    badge: "< 5 KB Pure Vanilla JS",
     summary:
-      "Continuous tracking of inference costs, rate limits, and budget quotas across Groq and OpenRouter models with automated failover policies.",
+      "Embed a floating, reactive AI assistant on WordPress, Wix, Squarespace, Shopify, or plain HTML by pasting a single script tag.",
     bullets: [
-      "Live RPM / TPM inspection and proactive quota exhaustion alerts",
-      "Granular token consumption analytics per tenant and agent",
-      "Dynamic model switching without client-side downtime",
+      "Bi-directional window.postMessage dynamic resizing (no click blocking)",
+      "Dedicated SSR iframe with transparent background & custom position",
+      "Instant brand synchronization whenever agent tone or greeting changes",
     ],
-    consoleRoute: "/admin/settings",
-    routeLabel: "Configure Model & Limits",
-  },
-  {
-    id: "escalations",
-    icon: BellRing,
-    iconColor: "text-[#F59E0B]",
-    title: "Autonomous Escalation Lifecycle",
-    badge: "3-Strike Policy",
-    summary:
-      "When queries cannot be answered with high grounding confidence, NexusAgent logs them into the unanswered repository and alerts operations.",
-    bullets: [
-      "Automated capture in PostgreSQL unanswered_logs table",
-      "Configurable 3-strike threshold triggering immediate admin alerts",
-      "Human-in-the-loop review workflow to close knowledge gaps",
-    ],
-    consoleRoute: "/admin/agents",
-    routeLabel: "Review Escalation Queue",
   },
 ];
 
 export function FeaturePillars() {
-  const [activePillar, setActivePillar] = useState<string>(PILLARS[0].id);
-
   return (
-    <section id="pillars" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-12 scroll-mt-16">
       {/* Section Header */}
-      <div className="text-center max-w-3xl mx-auto mb-14">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#161B22] border border-[#30363D] text-xs font-semibold text-[#94A3B8] mb-3">
-          <Layers className="w-3.5 h-3.5 text-[#FF6A00]" />
-          <span>Core Architectural Fabric</span>
-        </div>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-          Engineered for Enterprise Compliance & Reliability
+      <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8">
+        <span className="text-xs font-mono font-semibold uppercase tracking-wider text-[#FF6A00] bg-[#FF6A00]/10 border border-[#FF6A00]/25 px-3 py-1 rounded-full">
+          Core Capabilities
+        </span>
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white mt-2.5 sm:mt-3 tracking-tight">
+          Everything You Need to Deploy Enterprise AI Agents
         </h2>
-        <p className="mt-3 text-sm sm:text-base text-[#94A3B8]">
-          Four architectural pillars powering continuous knowledge ingestion, mathematical grounding, 
-          and production observability.
+        <p className="mt-2 text-xs sm:text-sm text-slate-600 dark:text-[#94A3B8] leading-relaxed">
+          Built from the ground up for multi-tenancy, deterministic grounding, and zero-headache website embedding.
         </p>
       </div>
 
-      {/* 4 Pillars Grid */}
-      <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+      {/* Feature Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
         {PILLARS.map((pillar) => {
           const Icon = pillar.icon;
-          const isSelected = activePillar === pillar.id;
-
           return (
             <div
               key={pillar.id}
-              onClick={() => setActivePillar(pillar.id)}
-              className={`p-6 sm:p-7 rounded-2xl bg-[#161B22]/90 border transition-all duration-200 cursor-pointer group flex flex-col justify-between ${
-                isSelected
-                  ? "border-[#FF6A00]/60 shadow-xl shadow-[#FF6A00]/10 bg-[#191F28]"
-                  : "border-[#30363D] hover:border-[#FF6A00]/30 hover:bg-[#191F28]/60"
-              }`}
+              className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#161B22] border border-slate-200 dark:border-[#30363D] hover:border-[#FF6A00]/40 dark:hover:border-[#FF6A00]/40 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 group flex flex-col justify-between"
             >
               <div>
                 {/* Header row */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-3">
                   <div
-                    className={`w-11 h-11 rounded-xl bg-[#0E1117] border border-[#30363D] flex items-center justify-center ${pillar.iconColor} group-hover:scale-105 transition-transform`}
+                    className={`w-10 h-10 rounded-xl bg-slate-50 dark:bg-[#0E1117] border border-slate-200 dark:border-[#30363D] flex items-center justify-center ${pillar.iconColor} group-hover:scale-105 transition-transform`}
                   >
                     <Icon className="w-5 h-5" />
                   </div>
-                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-[#0E1117] border border-[#30363D] text-[#CBD5E1]">
+                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-slate-100 dark:bg-[#0E1117] border border-slate-200 dark:border-[#30363D] text-slate-700 dark:text-[#CBD5E1]">
                     {pillar.badge}
                   </span>
                 </div>
 
                 {/* Title & Summary */}
-                <h3 className="text-lg font-bold text-white group-hover:text-[#FF6A00] transition-colors">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white group-hover:text-[#FF6A00] transition-colors">
                   {pillar.title}
                 </h3>
-                <p className="mt-2 text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
+                <p className="mt-1.5 text-xs sm:text-sm text-slate-600 dark:text-[#94A3B8] leading-relaxed">
                   {pillar.summary}
                 </p>
 
                 {/* Bullet Points */}
-                <ul className="mt-4 pt-4 border-t border-[#30363D]/60 space-y-2">
+                <ul className="mt-3 pt-3 border-t border-slate-100 dark:border-[#30363D]/60 space-y-2">
                   {pillar.bullets.map((bullet, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-xs text-[#CBD5E1]">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                    <li key={idx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-[#CBD5E1]">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                       <span>{bullet}</span>
                     </li>
                   ))}
                 </ul>
-              </div>
-
-              {/* Console Route Link */}
-              <div className="mt-6 pt-4 border-t border-[#30363D]/40">
-                <Link
-                  href={pillar.consoleRoute}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#FF6A00] hover:text-[#FF8C38] transition-colors"
-                >
-                  <span>{pillar.routeLabel}</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </Link>
               </div>
             </div>
           );

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>External Client Website - Live Embed Test</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.6;
+      padding-bottom: 80px;
+    }
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 18px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 20px;
+      color: #ff6a00;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #475569;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    nav a:hover {
+      color: #ff6a00;
+    }
+    .hero {
+      max-width: 1000px;
+      margin: 60px auto 40px;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 42px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      font-size: 18px;
+      color: #64748b;
+      max-width: 650px;
+      margin: 0 auto 32px;
+    }
+    .btn {
+      display: inline-block;
+      background: #ff6a00;
+      color: #ffffff;
+      padding: 12px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      box-shadow: 0 4px 14px rgba(255, 106, 0, 0.35);
+    }
+    .features {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+    .card p {
+      font-size: 14px;
+      color: #64748b;
+    }
+    .embed-banner {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 24px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 16px;
+      color: #1e3a8a;
+      font-size: 14px;
+    }
+    .embed-banner strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <span>★</span> Acme Enterprises Ltd.
+    </div>
+    <nav>
+      <a href="#services">Services</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Sample External Client Website</h1>
+    <p>This is an external website demonstrating the 100% live, interactive NexusAgent embeddable chat widget. Notice the floating button in the bottom-right corner!</p>
+    <a href="#contact" class="btn">Explore Services</a>
+  </section>
+
+  <div class="embed-banner">
+    <strong>⚡ Live Embed Verification Active:</strong>
+    This page loads <code>/widget.js</code> with a single <code>&lt;script&gt;</code> tag at the bottom of the body. Look at the bottom-right corner: click the floating action button to chat with the live AI assistant directly connected to the agent's ChromaDB knowledge base!
+  </div>
+
+  <section class="features" id="services">
+    <div class="card">
+      <h3>Enterprise Advisory</h3>
+      <p>Autonomous AI agents tailored to enterprise service delivery and SLA compliance.</p>
+    </div>
+    <div class="card">
+      <h3>Multi-Tenant RAG</h3>
+      <p>Partitioned ChromaDB collections ensure data isolation across client organizations.</p>
+    </div>
+    <div class="card">
+      <h3>Real-Time Streaming</h3>
+      <p>Direct low-latency inference streaming powered by Groq LPUs, Gemini, and OpenRouter.</p>
+    </div>
+  </section>
+
+  <!-- ======================================================== -->
+  <!-- LIVE 1-LINE EMBED SCRIPT FROM DASHBOARD                   -->
+  <!-- ======================================================== -->
+  <script
+    src="/widget.js"
+    data-tenant-id="a7_logics"
+    data-position="bottom-right"
+    async
+  ></script>
+
+</body>
+</html>
